@@ -60,22 +60,11 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
         <h1
           id="hero-title"
-          className="enter-line mt-6 font-display text-[clamp(3rem,calc(var(--hu)*6.5),6.25rem)] font-normal leading-[1.02] tracking-[-0.01em] text-[#14171A] lg:mt-[calc(var(--hu)*2.4)]"
+          className="enter-line mt-6 font-display text-[clamp(2rem,calc(var(--hu)*3.2),3.9rem)] font-normal leading-[1.06] tracking-[-0.01em] text-[#14171A] lg:mt-[calc(var(--hu)*2.4)]"
           style={{ animationDelay: "200ms" }}
         >
-          {locale === "ar" ? (
-            <>
-              <span className="block">{t.titleLines[0]}</span>
-              <span className="mt-2 block italic text-[#C51E28]">{t.titleLines[1].replace(/\*/g, "")}</span>
-            </>
-          ) : (
-            <>
-              <span className="block">Elevated</span>
-              <span className="block">living.</span>
-              <span className="block italic text-[#C51E28]">Designed</span>
-              <span className="block italic text-[#C51E28]">to belong.</span>
-            </>
-          )}
+          <span className="block">{t.titleLines[0]}</span>
+          <span className="mt-1 block italic text-[#C51E28]">{t.titleLines[1]?.replace(/\*/g, "")}</span>
         </h1>
 
         <p className="enter-up mt-6 max-w-[23rem] text-[15px] leading-[1.75] text-[#687076] lg:mt-[calc(var(--hu)*2.4)]" style={{ animationDelay: "380ms" }}>

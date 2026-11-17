@@ -1,49 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DAMA Development — corporate website
 
-## Getting Started
+Bilingual (EN/AR) corporate real estate website built with **Next.js 15 App
+Router**, React 19, TypeScript and Tailwind CSS v4. It is a **static export**
+deployed to GitHub Pages by `.github/workflows/deploy.yml`.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run dev            # http://localhost:3000 (redirects to /en or /ar)
+npm run lint            # eslint
+npm run test:integrity  # 71 data-integrity assertions
+NEXT_PUBLIC_BASE_PATH=/DAMA npm run build   # production static export -> out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The deploy workflow injects `NEXT_PUBLIC_BASE_PATH` from the Pages
+configuration, so a local GitHub Pages build should set it to `/DAMA`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/app/[locale]/                 EN + AR routes (static, dynamicParams = false)
+src/app/[locale]/projects/rawasin/mall/   Rawasin Mall destination
+src/app/[locale]/developments/[[...path]]  compatibility aliases -> /projects
+src/components/                   global + section components
+  sections/                       homepage sections
+  about/                          corporate profile sections
+  projects/detail/                project landing page template
+  rawasin/                        Rawasin Mall page + Floor Explorer
+src/content/                      all content (single source of truth)
+  projects.ts                     development hierarchy + cards + copy
+  rawasin.ts                      Rawasin Mall brochure data, floors, partners
+  pages.ts                        Living / Our Impact copy
+  news.ts / careers.ts            typed, intentionally empty until approved
+  site.ts / en.ts / ar.ts         site config + UI dictionaries
+src/fonts/                        self-hosted woff2 (Manrope, Gilda Display,
+                                  IBM Plex Sans Arabic, Montserrat)
+src/lib/seo.ts                    canonical / hreflang / JSON-LD helpers
+public/robots.txt, sitemap.xml    SEO
+docs/IMPLEMENTATION.md            full audit, sitemap, content report, QA
+```
 
-## Learn More
+Content is data-driven: adding a project, article or vacancy is a data edit,
+not a template edit. The design tokens live in `src/app/globals.css` and are
+intentionally unchanged (see `docs/IMPLEMENTATION.md` §1).
 
-To learn more about Next.js, take a look at the following resources:
+## Content policy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Only brochure-confirmed or DAMA-approved information is published. The site
+previously contained invented statistics, news, project facts and job postings;
+these were removed. Sections without approved content (Our Impact, Newsroom,
+careers vacancies, leadership profiles, organisational detail, original floor
+plans) render explicit content-pending states rather than placeholders that
+look like facts. `npm run test:integrity` enforces this.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**The `Rawasin Mall - Final.pdf` was not supplied with this build.** Drawing-only
+data (floor-plan images, retail unit numbers/areas, individual clinic
+numbers/areas) is marked source-pending. To activate the plan viewer without a
+code change, place `basement.jpg`, `ground.jpg`, `first.jpg`, `second.jpg`,
+`third.jpg` (or `.png` / `.webp`) in `public/images/rawasin/plans/` and rebuild.
+See `docs/IMPLEMENTATION.md` for the full list of information required from DAMA.
 
-## Deploy on Vercel
+## Forms / integration boundary
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`ContactForm`, project `InquiryForm` and the careers application modal validate
+client-side and POST to `NEXT_PUBLIC_LEADS_ENDPOINT`. GitHub Pages is static, so
+`src/app/api/leads/route.ts` is **not** hosted there: it is a starting point for
+a separately deployed, CORS-enabled endpoint that forwards to a CRM/webhook.
+Without a configured endpoint the forms report that the message was **not**
+sent — they never show fake success. Never put a secret in a `NEXT_PUBLIC_`
+variable; use `LEADS_WEBHOOK_URL` / `LEADS_WEBHOOK_TOKEN` on the server.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Review before publishing
 
-## DAMA site architecture and deployment notes
-
-The site is a bilingual Next.js static export, intended for GitHub Pages. It includes the home page, About, projects and individual project pages, Living, Our Impact, news and articles, careers, contact, privacy and terms. The homepage features a project overview and links to the editorial sections. Project content is maintained in `src/content/projects.ts`, and articles in `src/content/news.ts`.
-
-### Review before publishing
-
-- Existing project, company, contact and news data was carried over from the original site and has **not been independently verified**. In particular, the original homepage said Rawasin has 177 units, while the project data says 480; the homepage figure was removed pending confirmation. Review all figures, project names, contact details, imagery, dates, claims and legal text before publishing.
-- Madinet Masr's innovation products, financial details and named developments were deliberately not copied. Add DAMA-specific products or services only when their information is available.
-- Static GitHub Pages cannot execute the included Next.js API route. Contact, project-inquiry and careers forms require a separately hosted endpoint that accepts the existing JSON payload and permits CORS from the site origin. Set `NEXT_PUBLIC_LEADS_ENDPOINT` at build time; otherwise the forms report that the message/application was not sent. For GitHub Pages, add the variable to the build step of `.github/workflows` through a repository variable after the endpoint has been configured. Never put a secret in a `NEXT_PUBLIC_` variable.
-- The included API route is a starting point for a separate server deployment; it must be secured, configured with a real CRM/webhook, and deployed separately from this static export. Verify privacy/consent and anti-spam handling before enabling it.
-
-To test a GitHub Pages build locally: `NEXT_PUBLIC_BASE_PATH=/DAMA npm run build`. The exported site is written to `out/`.
+- Verify contact details, social URLs, legal text and the remaining
+  art-direction photography (carried over from the previous site). Until then,
+  `contactVerified`, `socialVerified` and `legalVerified` in
+  `src/content/site.ts` keep unverified details out of the public UI.
+- Obtain DAMA's approved spelling of Rawasin / Rawaseen (EN + AR). The build
+  uses `Rawasin` / `رواسين`; `/projects/rwasin` remains as a URL alias.
+- Obtain approval for the draft marketing headlines and for all corporate,
+  leadership, impact and news content.
+- Regenerate `public/sitemap.xml` / `robots.txt` if the production domain or
+  base path changes.

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Gilda_Display, IBM_Plex_Sans_Arabic, Manrope, Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/Footer";
@@ -7,17 +7,55 @@ import { Header } from "@/components/Header";
 import { revealBootScript } from "@/components/motion/boot";
 import { RevealController } from "@/components/motion/RevealController";
 import { getDictionary, isLocale, locales } from "@/content";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 import "../globals.css";
 
-const body = Manrope({ subsets: ["latin"], variable: "--font-body", display: "swap" });
-const heading = Gilda_Display({ subsets: ["latin"], weight: "400", variable: "--font-heading", display: "swap" });
-/** Wordmark face of the DAMA logo. */
-const logo = Montserrat({ subsets: ["latin"], weight: "400", variable: "--font-logo", display: "swap" });
-const arabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
+/*
+ * Self-hosted fonts. The typefaces are unchanged from the original design
+ * system (Manrope, Gilda Display, Montserrat, IBM Plex Sans Arabic), but they
+ * are served from the build instead of Google Fonts. This keeps the static
+ * export reproducible offline, avoids a render-blocking third-party request
+ * and removes a runtime dependency on fonts.googleapis.com.
+ */
+const body = localFont({
+  src: [
+    { path: "../../fonts/manrope-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../fonts/manrope-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../fonts/manrope-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../fonts/manrope-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-body",
+  display: "swap",
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
+  preload: true,
+});
+
+const heading = localFont({
+  src: [{ path: "../../fonts/gilda-display-latin-400-normal.woff2", weight: "400", style: "normal" }],
+  variable: "--font-heading",
+  display: "swap",
+  fallback: ["Georgia", "serif"],
+  preload: true,
+});
+
+const logo = localFont({
+  src: [{ path: "../../fonts/montserrat-latin-400-normal.woff2", weight: "400", style: "normal" }],
+  variable: "--font-logo",
+  display: "swap",
+  fallback: ["Montserrat", "Arial", "sans-serif"],
+});
+
+const arabic = localFont({
+  src: [
+    { path: "../../fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-plex-arabic",
   display: "swap",
+  fallback: ["ui-sans-serif", "sans-serif"],
+  preload: false,
 });
 
 export const dynamicParams = false;
@@ -33,11 +71,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
   return {
-    metadataBase: new URL("https://damadevelopments.com"),
-    title: { default: dict.meta.title, template: `%s — DAMA Developments` },
+    metadataBase: new URL(absoluteUrl("/")),
+    title: { default: dict.meta.title, template: `%s — DAMA Development` },
     description: dict.meta.description,
-    alternates: { languages: { en: "/en", ar: "/ar" } },
-    openGraph: { title: dict.meta.title, description: dict.meta.description, type: "website" },
+    applicationName: "DAMA Development",
+    alternates: {
+      canonical: absoluteUrl(`/${locale}`),
+      languages: languageAlternates(),
+    },
+    openGraph: {
+      title: dict.meta.title,
+      description: dict.meta.description,
+      type: "website",
+      siteName: "DAMA Development",
+      locale: locale === "ar" ? "ar_EG" : "en_EG",
+      url: absoluteUrl(`/${locale}`),
+    },
+    twitter: { card: "summary_large_image" },
+    robots: { index: true, follow: true },
   };
 }
 

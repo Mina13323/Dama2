@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mina13323.github.io/DAMA/sitemap.xml

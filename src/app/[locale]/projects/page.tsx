@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 import { ProjectsBrowser, type ProjectListItem } from "@/components/projects/ProjectsBrowser";
 import { ProjectsCta } from "@/components/projects/ProjectsCta";
 import { ProjectsHero } from "@/components/projects/ProjectsHero";
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: projectsPage.meta.title,
     description: projectsPage.meta.description,
-    alternates: { canonical: `/${locale}/projects`, languages: { en: "/en/projects", ar: "/ar/projects" } },
+    alternates: { canonical: absoluteUrl(`/${locale}/projects`), languages: languageAlternates(`/projects`) },
   };
 }
 

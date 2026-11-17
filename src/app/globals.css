@@ -69,6 +69,11 @@ html {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
+  /* Framer Motion writes an inline transform; override it rather than
+     branching on useReducedMotion() during SSR (which caused hydration drift). */
+  .parallax-layer {
+    transform: none !important;
+  }
 }
 
 /* ---------- Motion tokens ---------- */

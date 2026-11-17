@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 import { CareersView } from "@/components/careers/CareersView";
 import { Lines } from "@/components/motion/Lines";
 import { getDictionary, locales, type Locale } from "@/content";
@@ -15,10 +16,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: dict.careersPage.meta.title,
     description: dict.careersPage.meta.description,
-    alternates: {
-      canonical: `/${locale}/careers`,
-      languages: { en: "/en/careers", ar: "/ar/careers" },
-    },
+    alternates: { canonical: absoluteUrl(`/${locale}/careers`), languages: languageAlternates(`/careers`) },
     openGraph: {
       title: dict.careersPage.meta.title,
       description: dict.careersPage.meta.description,

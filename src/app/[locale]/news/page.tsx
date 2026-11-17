@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 import { Lines } from "@/components/motion/Lines";
 import { NewsBrowser } from "@/components/news/NewsBrowser";
 import { getDictionary, locales, type Locale } from "@/content";
@@ -16,10 +17,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: dict.newsPage.meta.title,
     description: dict.newsPage.meta.description,
-    alternates: {
-      canonical: `/${locale}/news`,
-      languages: { en: "/en/news", ar: "/ar/news" },
-    },
+    alternates: { canonical: absoluteUrl(`/${locale}/news`), languages: languageAlternates(`/news`) },
     openGraph: {
       title: dict.newsPage.meta.title,
       description: dict.newsPage.meta.description,

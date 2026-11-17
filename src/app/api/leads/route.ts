@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { getProject } from "@/content/projects";
 import { validateLead, type LeadInput } from "@/lib/leads";
 
-const validInquiryTypes = new Set(["general", "contact", "careers", "partnerships", "media"]);
+const validInquiryTypes = new Set([
+  "general", "contact", "careers", "partnerships", "media",
+  // Rawasin Mall enquiry types (see contact form + mall sales form).
+  "rawasin-mall", "rawasin-mall-retail", "rawasin-mall-medical",
+  "rawasin-mall-info", "rawasin-mall-partnership",
+]);
 
 /**
  * Lead & Inquiry endpoint for project interest, contact, and career applications.

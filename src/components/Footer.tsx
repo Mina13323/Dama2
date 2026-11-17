@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Mail, MapPin, Phone } from "lucide-react";
 import type { Dictionary, Locale } from "@/content";
-import { social } from "@/content/site";
+import { getProjects } from "@/content/projects";
+import { contact, contactVerified, social, socialVerified } from "@/content/site";
 import { Logo } from "./ui";
 import { stagger } from "./motion/Lines";
 
@@ -18,53 +20,49 @@ const socialIcons: Record<string, string> = {
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const t = dict.footer;
   const base = `/${locale}`;
+  const ar = locale === "ar";
   const year = new Date().getFullYear();
-  const socials = social.filter((s) => s.href);
+  const socials = socialVerified ? social.filter((s) => s.href) : [];
+  const projects = getProjects();
 
   const quickLinks = [
-    { href: `${base}/about`, label: locale === "ar" ? "من نحن" : "About" },
-    { href: `${base}/projects`, label: locale === "ar" ? "مشروعاتنا" : "Our Projects" },
-    { href: `${base}/living`, label: locale === "ar" ? "تجربة العيش" : "Living Experience" },
-    { href: `${base}/growth`, label: locale === "ar" ? "رؤيتنا للنمو" : "Our Impact" },
+    { href: `${base}/about`, label: dict.nav.about },
+    { href: `${base}/projects`, label: dict.nav.projects },
+    { href: `${base}/living`, label: dict.nav.lifestyle },
+    { href: `${base}/growth`, label: dict.nav.sustainability },
+    { href: `${base}/news`, label: dict.nav.news },
+    { href: `${base}/contact`, label: dict.nav.contact },
   ];
 
   const projectLinks = [
-    { href: `${base}/projects/rwasin`, label: locale === "ar" ? "رواسين" : "Rawasin" },
-    { href: `${base}/projects`, label: locale === "ar" ? "مجتمعاتنا" : "Communities" },
-    { href: `${base}/projects`, label: locale === "ar" ? "مشروعات مستقبلية" : "Future Developments" },
-  ];
-
-  const contactLinks = [
-    { href: `${base}/contact`, label: locale === "ar" ? "تواصل معنا" : "Get in Touch" },
-    { href: `${base}/careers`, label: locale === "ar" ? "الوظائف" : "Careers" },
-    { href: `${base}/news`, label: locale === "ar" ? "الأخبار" : "News" },
+    ...projects.map((p) => ({ href: `${base}/projects/${p.slug}`, label: p.name })),
+    { href: `${base}/projects/rawasin/mall`, label: ar ? "مول رواسين" : "Rawasin Mall" },
   ];
 
   const linkCls = "inline-flex min-h-8 items-center text-[13px] text-white/70 transition-colors hover:text-[#C51E28]";
 
   return (
     <footer className="relative bg-[#111417] text-white">
-      {/* Architectural Curved Shoulder Transition from Canvas to Dark Footer */}
-      <div className="relative h-10 sm:h-14 w-full overflow-hidden bg-[#FBFBFA]">
-        <div className="absolute inset-0 bg-[#111417] rounded-tl-[48px] sm:rounded-tl-[72px] rtl:rounded-tl-none rtl:rounded-tr-[48px] rtl:sm:rounded-tr-[72px]" />
+      {/* Architectural curved shoulder transition */}
+      <div className="relative h-10 w-full overflow-hidden bg-[#FBFBFA] sm:h-14">
+        <div className="absolute inset-0 rounded-tl-[48px] bg-[#111417] sm:rounded-tl-[72px] rtl:rounded-tl-none rtl:rounded-tr-[48px] rtl:sm:rounded-tr-[72px]" />
       </div>
 
       <div className="container-x pb-10 pt-4 lg:pb-12 lg:pt-6">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
-          {/* Left Column: Logo, Description, and Socials */}
-          <div data-reveal="up" style={stagger(0)} className="sm:col-span-2 lg:col-span-5">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          {/* Brand */}
+          <div data-reveal="up" style={stagger(0)} className="sm:col-span-2 lg:col-span-4">
             <Link href={base} aria-label={dict.a11y.home} className="inline-block">
               <Logo tone="light" />
             </Link>
             <p className="mt-5 max-w-sm text-[13.5px] leading-relaxed text-white/70">
-              {locale === "ar"
-                ? "نبتكر مجتمعات نابضة بالحياة من خلال التصميم المدروس والجودة الدائمة ومستقبل أكثر استدامة."
-                : "Creating vibrant communities through thoughtful design, lasting quality, and a more sustainable future."}
+              {ar
+                ? "تخلق داما للتطوير العقاري مجتمعات عمرانية راقية في صعيد مصر، تجمع بين الجودة والتصميم المدروس وهوية مصرية أصيلة."
+                : t.description}
             </p>
 
-            {/* Social Icons */}
             {socials.length > 0 && (
-              <ul className="mt-8 flex gap-3" aria-label={t.follow}>
+              <ul className="mt-7 flex gap-3" aria-label={t.follow}>
                 {socials.map((s) => (
                   <li key={s.label}>
                     <a
@@ -84,62 +82,77 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             )}
           </div>
 
-          {/* Quick Links Column */}
-          <nav data-reveal="up" style={stagger(1)} aria-label="Quick Links" className="lg:col-span-2 lg:col-start-7">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">
-              {locale === "ar" ? "روابط سريعة" : "Quick Links"}
-            </h3>
+          {/* Quick links */}
+          <nav data-reveal="up" style={stagger(1)} aria-label={t.quickLinks} className="lg:col-span-2 lg:col-start-6">
+            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.quickLinks}</h3>
             <ul className="mt-5 space-y-2">
               {quickLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className={linkCls}>
-                    {l.label}
-                  </Link>
+                <li key={l.href}>
+                  <Link href={l.href} className={linkCls}>{l.label}</Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          {/* Our Projects Column */}
-          <nav data-reveal="up" style={stagger(2)} aria-label="Our Projects" className="lg:col-span-2">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">
-              {locale === "ar" ? "مشروعاتنا" : "Our Projects"}
-            </h3>
+          {/* Projects */}
+          <nav data-reveal="up" style={stagger(2)} aria-label={t.ourProjects} className="lg:col-span-2">
+            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.ourProjects}</h3>
             <ul className="mt-5 space-y-2">
               {projectLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className={linkCls}>
-                    {l.label}
-                  </Link>
+                <li key={l.href}>
+                  <Link href={l.href} className={linkCls}>{l.label}</Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          {/* Contact Column */}
-          <nav data-reveal="up" style={stagger(3)} aria-label="Contact" className="lg:col-span-2">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">
-              {locale === "ar" ? "تواصل معنا" : "Contact"}
-            </h3>
-            <ul className="mt-5 space-y-2">
-              {contactLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className={linkCls}>
-                    {l.label}
-                  </Link>
+          {/* Contact */}
+          <div data-reveal="up" style={stagger(3)} className="lg:col-span-3">
+            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.getInTouch}</h3>
+            {contactVerified ? (
+              <ul className="mt-5 space-y-3 text-[13px] text-white/70">
+                {contact.phone && (
+                  <li className="flex items-start gap-2.5">
+                    <Phone aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
+                    <a href={`tel:${contact.phone.replace(/\s/g, "")}`} dir="ltr" className="hover:text-white">{contact.phone}</a>
+                  </li>
+                )}
+                {contact.email && (
+                  <li className="flex items-start gap-2.5">
+                    <Mail aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
+                    <a href={`mailto:${contact.email}`} dir="ltr" className="hover:text-white">{contact.email}</a>
+                  </li>
+                )}
+                <li className="flex items-start gap-2.5">
+                  <MapPin aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
+                  <span>{ar ? contact.addressAr : contact.address}</span>
                 </li>
-              ))}
-            </ul>
-          </nav>
+              </ul>
+            ) : (
+              <p className="mt-5 max-w-xs text-[13px] leading-relaxed text-white/70">
+                {ar
+                  ? "بيانات الاتصال الرسمية قيد اعتماد داما. استخدم نموذج التواصل أدناه."
+                  : "Official contact details are pending DAMA confirmation. Please use the enquiry form."}
+              </p>
+            )}
+            <Link
+              href={`${base}/contact`}
+              className="mt-5 inline-flex items-center gap-2 border-b border-[#C51E28] pb-1 text-[12.5px] font-semibold text-white hover:text-[#C51E28]"
+            >
+              {ar ? "أرسل استفسارًا" : "Send an enquiry"}
+            </Link>
+          </div>
         </div>
 
-        {/* Bottom Bar with Red Dash Accent */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[12px] text-white/50 sm:flex-row">
-          <p>© {year} DAMA Developments. {locale === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}</p>
-          <div className="flex flex-wrap items-center gap-4"><Link href={`${base}/privacy-policy`} className="hover:text-white">{locale === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}</Link><Link href={`${base}/terms-of-use`} className="hover:text-white">{locale === "ar" ? "شروط الاستخدام" : "Terms of Use"}</Link></div>
+          <p>© {year} DAMA Development. {ar ? "جميع الحقوق محفوظة." : "All rights reserved."}</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href={`${base}/privacy-policy`} className="hover:text-white">{t.privacy}</Link>
+            <Link href={`${base}/terms-of-use`} className="hover:text-white">{t.terms}</Link>
+          </div>
           <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.24em] text-white/80 uppercase">
             <span className="h-0.5 w-4 bg-[#C51E28]" aria-hidden />
-            <span>FOR A BRIGHTER TOMORROW</span>
+            <span>UPPER EGYPT · NEW SOHAG</span>
           </div>
         </div>
       </div>

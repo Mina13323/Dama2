@@ -128,7 +128,8 @@ export function CareersView({
 
   return (
     <div className="pb-24 sm:pb-32">
-      {/* Culture & Pillars Section */}
+      {/* Culture & Pillars Section — hidden until DAMA approves the copy */}
+      {pillars.length > 0 && (
       <section aria-labelledby="careers-culture-title" className="container-x pb-20 sm:pb-28">
         <div className="max-w-2xl">
           <div className="flex items-center gap-3">
@@ -169,6 +170,7 @@ export function CareersView({
           })}
         </div>
       </section>
+      )}
 
       {/* Open Positions Section */}
       <section id="positions" aria-labelledby="careers-positions-title" className="border-t border-[#ECEAE5] bg-[#FBFBFA] py-20 sm:py-28">
@@ -199,6 +201,18 @@ export function CareersView({
           </div>
 
           <div className="mt-12 space-y-6">
+            {careerPositions.length === 0 && (
+              <div className="rounded-[28px] border border-dashed border-[#D9D6CF] bg-white p-8 text-center sm:p-12">
+                <h3 className="font-display text-2xl text-[#14171A]">
+                  {locale === "ar" ? "لا توجد وظائف معلنة حاليًا." : "No approved vacancies published yet."}
+                </h3>
+                <p className="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-[#687076]">
+                  {locale === "ar"
+                    ? "ستُنشر الوظائف المعتمدة من داما هنا. يمكنك إرسال طلب توظيف عام من خلال النموذج أعلاه."
+                    : "DAMA-approved roles will be published here. You are welcome to submit a general application using the button above."}
+                </p>
+              </div>
+            )}
             {careerPositions.map((pos, idx) => {
               const copy = pos.copy[locale];
               return (

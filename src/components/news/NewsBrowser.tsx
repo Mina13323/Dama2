@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import { ArrowRight, Clock, Search } from "lucide-react";
 import type { Dictionary, Locale } from "@/content";
-import type { NewsArticle, NewsCategory } from "@/content/news";
+import { getNewsCategories, type NewsArticle, type NewsCategory } from "@/content/news";
 import { stagger } from "../motion/Lines";
 
 export function NewsBrowser({
@@ -21,13 +21,7 @@ export function NewsBrowser({
   const [query, setQuery] = useState("");
   const searchId = useId();
 
-  const categories: ("all" | NewsCategory)[] = [
-    "all",
-    "project-updates",
-    "sustainability",
-    "events",
-    "architecture",
-  ];
+  const categories: ("all" | NewsCategory)[] = ["all", ...getNewsCategories()];
 
   const visible = useMemo(() => {
     return articles.filter((article) => {

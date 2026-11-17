@@ -1,18 +1,18 @@
 /**
  * Site-wide data that does not change between languages.
  *
- * IMPORTANT — before launch:
- *  - Replace every `images` entry with official DAMA photography/renders (place files in /public).
- *    The current Unsplash images are temporary stand-ins for art direction only.
- *  - Fill in `contact` and `social` with verified details. Empty values are hidden in the UI,
- *    so nothing invented is ever shown to visitors.
+ * All imagery is now local: no third-party image hosts are used at runtime.
+ * Photography currently in /public is architectural art direction carried over
+ * from the existing site; it must be replaced with approved DAMA project
+ * photography before publication (see docs/IMPLEMENTATION.md).
+ *
+ * `contact` and `social` were carried over from the original site and have NOT
+ * been independently verified. They are listed in the "information required
+ * from DAMA" section of the implementation report.
  */
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const asset = (path: string) => `${basePath}${path}`;
-
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=2400&q=80`;
 
 export const images = {
   hero: asset("/images/hero-building.webp"),
@@ -31,20 +31,20 @@ export const images = {
   story: asset("/images/lifestyle-interior.jpg"),
   lifestyle: asset("/images/lifestyle-terrace.jpg"),
   lifestyleThemes: [
-    unsplash("photo-1576013551627-0cc20b96c2a7"),
-    unsplash("photo-1600210492486-724fe5c67fb0"),
-    unsplash("photo-1512917774080-9991f1c4c750"),
+    asset("/images/lifestyle-terrace.jpg"),
+    asset("/images/lifestyle-interior.jpg"),
+    asset("/images/dama-courtyard-living.jpg"),
   ],
   values: [
-    unsplash("photo-1441974231531-c6227db76b6e"),
-    unsplash("photo-1600607687939-ce8a6c25118c"),
-    unsplash("photo-1600047509807-ba8f99d2cdde"),
-    unsplash("photo-1600585154340-be6161a56a0c"),
+    asset("/images/story-detail-tree.webp"),
+    asset("/images/lifestyle-interior.jpg"),
+    asset("/images/story-detail-palms.webp"),
+    asset("/images/lifestyle-entrance.webp"),
   ],
   news: [
-    unsplash("photo-1545324418-cc1a3fa10c00"),
-    unsplash("photo-1531058020387-3be344556be6"),
-    unsplash("photo-1600566753190-17f0baa2a6c3"),
+    asset("/images/about-dama.jpg"),
+    asset("/images/hero-dama.jpg"),
+    asset("/images/lifestyle-terrace.jpg"),
   ],
   cta: asset("/images/cta-dama.jpg"),
   about: {
@@ -63,7 +63,13 @@ export { projects, type ProjectSlug } from "./projects";
 export { newsArticles, getNewsArticles, getNewsArticle } from "./news";
 export { careerPositions, getCareerPositions, getCareerPosition } from "./careers";
 
-/** Official verified contact channels for DAMA Developments */
+/**
+ * Contact channels carried over from the previous site. NOT independently
+ * verified: `contactVerified` keeps them out of the public UI until DAMA signs off.
+ */
+export const contactVerified = false;
+export const socialVerified = false;
+export const legalVerified = false;
 export const contact = {
   phone: "+20 2 2810 5000",
   email: "info@damadevelopments.com",
@@ -75,7 +81,7 @@ export const contact = {
   workingHoursAr: "الأحد – الخميس، 9:00 صباحًا – 6:00 مساءً (توقيت القاهرة)",
 };
 
-/** Official verified social profile URLs */
+/** Social URLs carried over from the previous site — pending verification. */
 export const social: { label: "Instagram" | "LinkedIn" | "YouTube" | "Facebook"; href: string }[] = [
   { label: "Instagram", href: "https://instagram.com/damadevelopments" },
   { label: "LinkedIn", href: "https://linkedin.com/company/damadevelopments" },

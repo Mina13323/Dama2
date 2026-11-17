@@ -12,8 +12,24 @@ type Status = "idle" | "sending" | "success" | "not-configured" | "error";
  * Project inquiry form. Posts to /api/leads, which forwards to the configured
  * CRM/webhook. Success is only shown when the server confirms delivery.
  */
-export function InquiryForm({ project, locale, labels }: { project: string; locale: Locale; labels: Dictionary["projectDetail"]["inquiry"] }) {
-  const [values, setValues] = useState<LeadInput>({ name: "", email: "", phone: "", message: "", consent: false, project, locale });
+export function InquiryForm({
+  project,
+  locale,
+  labels,
+  subjects,
+  subjectLabel,
+}: {
+  project: string;
+  locale: Locale;
+  labels: Dictionary["projectDetail"]["inquiry"];
+  /** Optional enquiry-type select (used by the Rawasin Mall sales form). */
+  subjects?: Record<string, string>;
+  subjectLabel?: string;
+}) {
+  const firstSubject = subjects ? Object.keys(subjects)[0] : undefined;
+  const [values, setValues] = useState<LeadInput>({
+    name: "", email: "", phone: "", message: "", consent: false, project, locale, subject: firstSubject,
+  });
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const id = useId();
@@ -74,6 +90,25 @@ export function InquiryForm({ project, locale, labels }: { project: string; loca
 
   return (
     <form noValidate onSubmit={onSubmit} className="relative grid gap-5 sm:grid-cols-2">
+      {subjects && subjectLabel && (
+        <div className="sm:col-span-2">
+          <label htmlFor={`${id}-subject`} className={labelCls}>
+            {subjectLabel}
+          </label>
+          <select
+            id={`${id}-subject`}
+            name="subject"
+            value={values.subject ?? firstSubject}
+            onChange={(e) => set("subject", e.target.value)}
+            className={`${input} cursor-pointer`}
+          >
+            {Object.entries(subjects).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="sm:col-span-2">
         <label htmlFor={`${id}-name`} className={labelCls}>
           {labels.name}

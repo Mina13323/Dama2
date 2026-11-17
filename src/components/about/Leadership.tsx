@@ -1,77 +1,76 @@
-import Image from "next/image";
-import { ArrowRight, Quote, UserRound } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Landmark, UserRound, UsersRound } from "lucide-react";
 import type { Dictionary } from "@/content";
-import { leadership } from "@/content/site";
 import { SectionIntro } from "../ui";
 import { stagger } from "../motion/Lines";
 
 /**
- * Olive editorial band with two cream profile cards. Profiles render official
- * data from content/site.ts; until it is supplied, each field shows a clearly
- * marked placeholder.
+ * Leadership framework.
+ *
+ * DAMA has not supplied approved names, portraits, biographies or official
+ * position titles. This section therefore presents the *structure* only and
+ * states clearly that profiles are pending approval — no people or quotes are
+ * invented. Once `content/site.ts -> leadership` is populated, the same grid
+ * can render the approved profiles.
  */
 export function Leadership({ dict }: { dict: Dictionary }) {
   const t = dict.about.leadership;
+  const ar = dict.locale === "ar";
+
+  const tiers = [
+    {
+      Icon: Landmark,
+      kicker: ar ? "المستوى الأول" : "Tier 01",
+      title: ar ? "مجلس الإدارة" : "Board of Directors",
+      body: ar
+        ? "الأسماء والمناصب الرسمية والسير الذاتية تُنشر بعد اعتمادها من داما."
+        : "Names, official positions and biographies will be published once approved by DAMA.",
+    },
+    {
+      Icon: UsersRound,
+      kicker: ar ? "المستوى الثاني" : "Tier 02",
+      title: ar ? "الإدارة التنفيذية" : "Executive Management",
+      body: ar
+        ? "الهيكل التنفيذي وخطوط الإبلاغ تُنشر بعد اعتمادها رسميًا."
+        : "The executive structure and reporting lines will be published once formally approved.",
+    },
+    {
+      Icon: UserRound,
+      kicker: ar ? "الملفات الفردية" : "Profiles",
+      title: ar ? "السير الذاتية والصور الرسمية" : "Leadership Profiles",
+      body: ar
+        ? "تدعم الصفحة الصور الرسمية والمناصب والسير الذاتية وروابط الملفات المهنية فور توفرها."
+        : "The page supports official portraits, positions, biographies and profile links as soon as they are supplied.",
+    },
+  ];
+
   return (
     <section id="leadership" aria-labelledby="leadership-title" className="relative isolate overflow-hidden bg-[#111417] text-white">
-      <div className="container-x grid grid-cols-1 gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-8 lg:py-28">
+      <div className="container-x grid grid-cols-1 gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-start lg:gap-10 lg:py-28">
         <div className="lg:col-span-4">
           <SectionIntro id="leadership-title" tone="light" eyebrow={t.eyebrow} lines={t.titleLines} body={t.body} />
+          <Link
+            href={`/${dict.locale}/contact`}
+            className="mt-8 inline-flex min-h-11 items-center gap-3 rounded-full border border-white/25 px-6 text-[12.5px] font-semibold text-white transition-colors hover:border-white/60"
+          >
+            {ar ? "استفسارات الشركة" : "Corporate enquiries"}
+            <ArrowRight aria-hidden className="flip-rtl size-4" />
+          </Link>
         </div>
 
-        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:col-span-8">
-          {leadership.map((person, i) => {
-            const role = t.roles[person.role];
+        <ul className="grid gap-5 lg:col-span-8">
+          {tiers.map((tier, i) => {
+            const Icon = tier.Icon;
             return (
-              <li key={person.role} data-reveal="card" style={stagger(2 + i * 2)}>
-                <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-white/10 bg-white text-[#14171A] sm:flex-row shadow-lg">
-                  {/* Portrait */}
-                  <div className="relative aspect-[4/3] shrink-0 overflow-hidden sm:aspect-auto sm:min-h-72 sm:w-[46%]">
-                    <div data-reveal="wipe" style={stagger(2 + i * 2)} className="absolute inset-0">
-                      {person.portrait ? (
-                        <Image
-                          src={person.portrait}
-                          alt={`${person.name}, ${role}`}
-                          fill
-                          sizes="(min-width:768px) 20vw, 90vw"
-                          className="object-cover object-top"
-                        />
-                      ) : (
-                        <div className="flex h-full flex-col items-center justify-center gap-3 bg-[#1B2127] text-white/70">
-                          <UserRound aria-hidden strokeWidth={0.8} className="size-20 text-[#C51E28]" />
-                          <span className="max-w-[10rem] text-center text-[10px] font-semibold tracking-wider uppercase rtl:text-xs rtl:tracking-normal">
-                            {t.portraitPending}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Message */}
-                  <div className="flex flex-1 flex-col p-6">
-                    <Quote aria-hidden strokeWidth={1.2} className="size-5 fill-ink/80 text-ink/80" />
-                    <p data-reveal="up" style={stagger(3 + i * 2)} className="mt-3 text-[13px] leading-relaxed text-muted">
-                      {t.quotePending}
-                    </p>
-                    <div data-reveal="up" style={stagger(4 + i * 2)} className="mt-auto flex items-end justify-between gap-3 pt-6">
-                      <div>
-                        <h3 className={`text-[14px] font-semibold ${person.name ? "text-ink" : "text-ink/45"}`}>
-                          {person.name || t.namePending}
-                        </h3>
-                        <p className="mt-0.5 text-[11.5px] text-muted">{role}</p>
-                      </div>
-                      {person.linkedin && (
-                        <a
-                          href={person.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`${t.linkedin}: ${person.name}`}
-                          className="group inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-ink/30 transition-colors duration-200 hover:bg-ink hover:text-white"
-                        >
-                          <ArrowRight aria-hidden className="flip-rtl size-4" />
-                        </a>
-                      )}
-                    </div>
+              <li key={tier.title} data-reveal="card" style={stagger(2 + i)}>
+                <article className="flex items-start gap-5 rounded-[24px] border border-white/10 bg-white/[0.06] p-6 sm:p-8">
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full border border-[#C51E28]/50 bg-[#C51E28]/15 text-[#E4545C]">
+                    <Icon aria-hidden strokeWidth={1.5} className="size-5" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] font-bold tracking-[0.26em] text-white/45 uppercase rtl:tracking-normal">{tier.kicker}</p>
+                    <h3 className="mt-2 font-display text-2xl text-white">{tier.title}</h3>
+                    <p className="mt-2 max-w-xl text-[13.5px] leading-relaxed text-white/65">{tier.body}</p>
                   </div>
                 </article>
               </li>

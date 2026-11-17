@@ -10,10 +10,13 @@ export function Stats({ dict, band = false }: { dict: Dictionary; band?: boolean
 
   return (
     <section
-      aria-label="Key Performance Indicators"
+      aria-label={dict.statsLabel}
       className={`relative isolate overflow-hidden bg-[#F3F2EF] ${band ? "py-12" : "pb-4 pt-4 lg:pb-5"}`}
     >
       <div className={band ? "container-x" : statsRow}>
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+          <p className="text-[11px] font-bold tracking-[0.22em] text-[#C51E28] uppercase rtl:tracking-normal">{dict.statsLabel}</p>
+        </div>
         <div className={`grid gap-4 ${band ? "" : `lg:items-stretch ${statsGrid}`}`}>
           {/* Metrics pill */}
           <div
@@ -56,6 +59,7 @@ export function Stats({ dict, band = false }: { dict: Dictionary; band?: boolean
             </div>
           )}
         </div>
+        <p className="mt-4 text-[11.5px] leading-relaxed text-[#687076]">{dict.statsSource}</p>
       </div>
     </section>
   );

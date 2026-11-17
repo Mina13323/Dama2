@@ -1,77 +1,55 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { Dictionary } from "@/content";
-import { partners } from "@/content/site";
+import type { Dictionary, Locale } from "@/content";
+import { rawasinMall } from "@/content/rawasin";
 import { SectionIntro } from "../ui";
 import { stagger } from "../motion/Lines";
 
-const PLACEHOLDER_SLOTS = 6;
-
 /**
- * Open logo grid on cream. Only verified partners from content/site.ts are
- * shown; until then, neutral numbered slots keep the composition intact.
+ * Collaborations. The brochure only establishes *project-specific* roles for
+ * Dar Arafa Architecture, ACCORD and WE on Rawasin Mall, so each entry carries
+ * an explicit context label. No organisation is described as a company-wide
+ * strategic partner, and no logos are shown (none were supplied).
  */
 export function Partners({ dict }: { dict: Dictionary }) {
   const t = dict.about.partners;
-  const verified = partners.length > 0;
-  const cell = "flex h-20 items-center justify-center sm:h-24";
+  const locale = dict.locale as Locale;
+  const ar = locale === "ar";
+  const entries = rawasinMall[locale].partners.entries;
 
   return (
     <section id="partners" aria-labelledby="partners-title" className="bg-[#FBFBFA] py-20 sm:py-24">
-      <div className="container-x grid grid-cols-1 gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-8">
+      <div className="container-x grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start lg:gap-10">
         <div className="lg:col-span-4">
           <SectionIntro id="partners-title" eyebrow={t.eyebrow} lines={t.titleLines} body={t.body} />
-        </div>
-
-        <div className="lg:col-span-5 lg:col-start-6">
-          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {verified
-              ? partners.map((p, i) => (
-                  <li key={p.name} data-reveal="fade" style={stagger(2 + i)}>
-                    {p.href ? (
-                      <a
-                        href={p.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`${cell} rounded-2xl border border-[#ECEAE5] bg-white opacity-70 grayscale transition-all duration-200 hover:border-[#C51E28] hover:opacity-100 hover:grayscale-0 shadow-2xs`}
-                      >
-                        <Image src={p.logo} alt={p.name} width={140} height={48} className="h-9 w-auto object-contain" />
-                      </a>
-                    ) : (
-                      <div className={`${cell} rounded-2xl border border-[#ECEAE5] bg-white opacity-70 grayscale transition-all duration-200 hover:opacity-100 hover:grayscale-0 shadow-2xs`}>
-                        <Image src={p.logo} alt={p.name} width={140} height={48} className="h-9 w-auto object-contain" />
-                      </div>
-                    )}
-                  </li>
-                ))
-              : Array.from({ length: PLACEHOLDER_SLOTS }, (_, i) => (
-                  <li key={i} data-reveal="fade" style={stagger(2 + i)}>
-                    <div className={`${cell} rounded-2xl border border-[#ECEAE5] bg-white flex-col gap-1.5 text-[#14171A]/40 shadow-2xs`}>
-                      <span className="font-display text-lg leading-none">{t.placeholder}</span>
-                      <span className="text-[9.5px] font-bold tracking-[0.24em] text-[#C51E28] uppercase" dir="ltr">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-          </ul>
-          {!verified && (
-            <p data-reveal="fade" style={stagger(8)} className="mt-4 text-center text-[11.5px] text-[#687076] sm:text-start">
-              {t.placeholderNote}
-            </p>
-          )}
-        </div>
-
-        <div data-reveal="up" style={stagger(8)} className="lg:col-span-2 lg:col-start-11 lg:justify-self-end">
-          <Link href={`/${dict.locale}/contact`} className="group inline-flex min-h-11 items-center gap-2 border-b-2 border-[#C51E28] pb-1 text-[13px] font-bold tracking-wide text-[#14171A] transition-colors hover:text-[#C51E28]">
-            {t.cta}
-            <ArrowRight
-              aria-hidden
-              className="flip-rtl size-4 transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 text-[#C51E28]"
-            />
+          <p className="mt-6 text-[11.5px] leading-relaxed text-[#8C939B]">{rawasinMall[locale].partners.logoNote}</p>
+          <Link
+            href={`/${locale}/projects/rawasin/mall#partners`}
+            className="group mt-7 inline-flex min-h-11 items-center gap-2 border-b-2 border-[#C51E28] pb-1 text-[13px] font-bold text-[#14171A] transition-colors hover:text-[#C51E28]"
+          >
+            {ar ? "شركاء مول رواسين" : "Rawasin Mall partners"}
+            <ArrowRight aria-hidden className="flip-rtl size-4 text-[#C51E28] transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
           </Link>
         </div>
+
+        <ul className="grid gap-4 lg:col-span-8">
+          {entries.map((entry, i) => (
+            <li key={entry.name} data-reveal="up" style={stagger(2 + i)}>
+              <article className="grid gap-4 rounded-[24px] border border-[#ECEAE5] bg-white p-6 shadow-xs sm:grid-cols-[minmax(0,190px)_1fr] sm:p-8">
+                <div>
+                  <p className="font-display text-2xl text-[#14171A]" dir="ltr">{entry.name}</p>
+                  <span className="mt-3 inline-flex rounded-full bg-[#FDF2F2] px-3 py-1 text-[10.5px] font-semibold tracking-wide text-[#C51E28]">
+                    {entry.context}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-semibold text-[#C51E28]">{entry.role}</h3>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-[#687076]">{entry.description}</p>
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

@@ -7,9 +7,14 @@ import { Breadcrumbs } from "@/components/ui";
 import { stagger } from "@/components/motion/Lines";
 import { getDictionary, isLocale, locales, type Locale } from "@/content";
 import { getNewsArticle, getNewsArticles } from "@/content/news";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 
 export function generateStaticParams() {
   const articles = getNewsArticles();
+  // A static export needs at least one param for a dynamic route. While DAMA
+  // has not approved any article, a non-indexed placeholder keeps the article
+  // template alive in the build without publishing fictional content.
+  if (articles.length === 0) return locales.map((locale) => ({ locale, slug: "_pending" }));
   return locales.flatMap((locale) => articles.map((a) => ({ locale, slug: a.slug })));
 }
 
@@ -18,15 +23,12 @@ type Params = Promise<{ locale: string; slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, slug } = await params;
   const article = getNewsArticle(slug);
-  if (!article || !isLocale(locale)) return {};
+  if (!article || !isLocale(locale)) return { title: "News", robots: { index: false, follow: false } };
   const copy = article.copy[locale];
   return {
     title: copy.title,
     description: copy.summary,
-    alternates: {
-      canonical: `/${locale}/news/${slug}`,
-      languages: { en: `/en/news/${slug}`, ar: `/ar/news/${slug}` },
-    },
+    alternates: { canonical: absoluteUrl(`/${locale}/news/${slug}`), languages: languageAlternates(`/news/${slug}`) },
     openGraph: {
       title: copy.title,
       description: copy.summary,
@@ -41,7 +43,7 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const article = getNewsArticle(slug);
-  if (!article) notFound();
+  if (!article) return <ArticlePending locale={locale} />;
 
   const dict = getDictionary(locale);
   const copy = article.copy[locale];
@@ -221,5 +223,29 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
         </section>
       )}
     </article>
+  );
+}
+
+/** Content-pending state for the article detail template (never indexed). */
+function ArticlePending({ locale }: { locale: Locale }) {
+  const ar = locale === "ar";
+  return (
+    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 px-6 text-center">
+      <p className="eyebrow">{ar ? "الأخبار والإعلام" : "News & Media"}</p>
+      <h1 className="heading-lg max-w-2xl text-ink">
+        {ar ? "لم تُنشر مقالات معتمدة بعد." : "No approved articles have been published yet."}
+      </h1>
+      <p className="max-w-md text-[14.5px] leading-relaxed text-muted">
+        {ar
+          ? "سيتم نشر الأخبار والبيانات الصحفية وتحديثات المشروعات هنا فور اعتمادها من داما."
+          : "Approved news, press releases and project updates will appear here as soon as DAMA supplies them."}
+      </p>
+      <Link
+        href={`/${locale}/news`}
+        className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[#C51E28] px-6 text-[13px] font-semibold text-white hover:bg-[#9F121A]"
+      >
+        {ar ? "العودة إلى الأخبار" : "Back to the newsroom"}
+      </Link>
+    </div>
   );
 }
