@@ -3,7 +3,7 @@ import { CorporateHeroJsonLd } from "@/components/CorporateHeroJsonLd";
 import { Discover } from "@/components/sections/Discover";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { Hero } from "@/components/sections/Hero";
-import { ImpactTeaser, MallFeature } from "@/components/sections/CorporateFeatures";
+import { MallFeature } from "@/components/sections/CorporateFeatures";
 import { Lifestyle } from "@/components/sections/Lifestyle";
 import { News } from "@/components/sections/News";
 import { Projects } from "@/components/sections/Projects";
@@ -43,7 +43,6 @@ export default async function HomePage({ params }: { params: Params }) {
       <MallFeature locale={locale} />
       <Lifestyle {...props} />
       <Values {...props} />
-      <ImpactTeaser locale={locale} />
       <News {...props} />
       <FinalCta {...props} />
     </>

@@ -92,8 +92,6 @@ Canonical routes (each has an EN and AR version, with reciprocal `hreflang` and 
 /en/projects/rawasin/mall             Rawasin Mall (component / destination)
 /en/projects/dama-residence           DAMA Residence
 /en/projects/dama-view                DAMA View
-/en/living                            Living
-/en/growth                            Our Impact
 /en/news                              News & Media
 /en/news/[slug]                       Article detail template (no approved articles yet)
 /en/contact                           Contact Us + enquiry form

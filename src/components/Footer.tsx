@@ -28,8 +28,6 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const quickLinks = [
     { href: `${base}/about`, label: dict.nav.about },
     { href: `${base}/projects`, label: dict.nav.projects },
-    { href: `${base}/living`, label: dict.nav.lifestyle },
-    { href: `${base}/growth`, label: dict.nav.sustainability },
     { href: `${base}/news`, label: dict.nav.news },
     { href: `${base}/contact`, label: dict.nav.contact },
   ];

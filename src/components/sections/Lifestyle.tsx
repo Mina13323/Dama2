@@ -14,18 +14,22 @@ import { stagger } from "../motion/Lines";
 export function Lifestyle({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const t = dict.lifestyle;
 
+  const ar = locale === "ar";
+
   const cards = [
     {
-      title: t.cards?.[0]?.title || "Built for Better Living",
+      title: t.cards?.[0]?.title || (ar ? "مصمم لحياة أفضل" : "Built for Better Living"),
       image: images.courtyard,
-      alt: "Tree-lined courtyard paths between sand-stone residences",
+      alt: ar ? "ممرات تحفها الأشجار بين وحدات سكنية من الحجر الرملي" : "Tree-lined courtyard paths between sand-stone residences",
       position: "object-[50%_55%]",
+      href: `/${locale}/projects/rawasin`,
     },
     {
-      title: t.cards?.[1]?.title || "Thoughtful Design",
+      title: t.cards?.[1]?.title || (ar ? "تصميم مدروس" : "Thoughtful Design"),
       image: images.lifestyleEntrance,
-      alt: "Stone entrance of building C1 framed by clipped hedges",
+      alt: ar ? "مدخل حجري للمبنى C1 تحيط به أسوار نباتية مشذبة" : "Stone entrance of building C1 framed by clipped hedges",
       position: "object-center",
+      href: `/${locale}/projects/dama-residence`,
     },
   ];
 
@@ -89,7 +93,7 @@ export function Lifestyle({ dict, locale }: { dict: Dictionary; locale: Locale }
         {cards.map((card, i) => (
           <Link
             key={card.title}
-            href={`/${locale}/projects`}
+            href={card.href}
             data-reveal="card"
             style={stagger(2 + i)}
             className="group relative block aspect-[4/3] overflow-hidden rounded-[28px] bg-[#1d1f22] shadow-[0_30px_60px_-30px_rgba(20,23,26,0.45)] lg:aspect-auto lg:h-[calc(var(--u)*29.8)] lg:rounded-[calc(var(--u)*2.6)]"

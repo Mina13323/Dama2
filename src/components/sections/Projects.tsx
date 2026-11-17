@@ -82,11 +82,11 @@ export function Projects({ dict, locale }: { dict: Dictionary; locale: Locale })
       >
         <span aria-hidden className="absolute inset-0 bg-[#C51E28]/93 transition-colors duration-300 group-hover:bg-[#A8141D]/95" />
         <span className="relative text-[10px] font-medium tracking-[0.3em] text-white/80 uppercase rtl:tracking-normal">
-          {t.communityLabel || "A COMMUNITY OF"}
+          {t.communityLabel || (locale === "ar" ? "مجتمع من" : "A COMMUNITY OF")}
         </span>
         <span className="relative mt-4 flex items-end justify-between gap-6 lg:mt-[calc(var(--u)*1.3)]">
           <span className="max-w-[11em] text-[clamp(1.25rem,calc(var(--u)*1.8),1.75rem)] font-medium uppercase leading-[1.25] tracking-[0.01em]">
-            {t.communityUnits || "5 LEVELS · 6,280 M²"}
+            {t.communityUnits || (locale === "ar" ? "٥ طوابق · ٦٬٢٨٠ م²" : "5 LEVELS · 6,280 M²")}
           </span>
           <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-white/85 transition-transform duration-200 group-hover:scale-105 lg:size-[max(44px,calc(var(--u)*4.2))]">
             <ArrowRight aria-hidden className="flip-rtl size-5 lg:size-[max(18px,calc(var(--u)*1.6))]" />

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Dictionary, Locale } from "@/content";
 import { images } from "@/content/site";
 import { splitInTwo } from "@/lib/text";
@@ -82,7 +82,7 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
           <Link href={`/${locale}/about`} className="group inline-flex shrink-0 items-center gap-4 whitespace-nowrap text-[12.5px] font-semibold text-[#14171A]">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-[#14171A]/80 transition-colors group-hover:border-[#C51E28] group-hover:text-[#C51E28]">
-              <Play aria-hidden className="size-4 translate-x-px fill-current" />
+              <ArrowRight aria-hidden className="flip-rtl size-4" />
             </span>
             <span className="border-b border-[#C51E28]/60 pb-1 transition-colors group-hover:text-[#C51E28]">{t.secondary}</span>
           </Link>
@@ -112,7 +112,7 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             <button
               type="button"
               onClick={() => go(-1)}
-              aria-label="Previous slide"
+              aria-label={dict.a11y.prev}
               className="flex size-10 items-center justify-center rounded-full border border-[#14171A]/15 text-[#14171A] transition-colors hover:border-[#C51E28] hover:text-[#C51E28] lg:size-[max(40px,calc(var(--hu)*3.6))]"
             >
               <ArrowLeft aria-hidden className="flip-rtl size-4" />
@@ -123,7 +123,7 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             <button
               type="button"
               onClick={() => go(1)}
-              aria-label="Next slide"
+              aria-label={dict.a11y.next}
               className="flex size-10 items-center justify-center rounded-full border border-[#14171A]/15 text-[#14171A] transition-colors hover:border-[#C51E28] hover:text-[#C51E28] lg:size-[max(40px,calc(var(--hu)*3.6))]"
             >
               <ArrowRight aria-hidden className="flip-rtl size-4" />

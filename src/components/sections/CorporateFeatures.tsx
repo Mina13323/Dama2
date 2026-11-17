@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/content";
-import { impactContent } from "@/content/pages";
 import { mallImages, rawasinMall } from "@/content/rawasin";
 
 /** Section 06 — large architectural feature for Rawasin Mall. */
@@ -54,39 +53,6 @@ export function MallFeature({ locale }: { locale: Locale }) {
           <div className="absolute bottom-5 start-5 rounded-full border border-white/25 bg-[#111417]/70 px-4 py-2 text-[11px] font-semibold tracking-wider text-white/80 backdrop-blur sm:bottom-8 sm:start-8">
             {ar ? "سوهاج الجديدة · صعيد مصر" : "NEW SOHAG · UPPER EGYPT"}
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Section 05 — restrained Our Impact teaser. No unverified claims or statistics. */
-export function ImpactTeaser({ locale }: { locale: Locale }) {
-  const t = impactContent[locale];
-  const ar = locale === "ar";
-  return (
-    <section aria-labelledby="impact-teaser-title" className="border-y border-[#ECEAE5] bg-[#F3F2EF]">
-      <div className="container-x grid gap-8 py-14 sm:py-16 lg:grid-cols-12 lg:items-center">
-        <div className="lg:col-span-2">
-          <p className="text-[10.5px] font-bold tracking-[0.28em] text-[#C51E28] uppercase rtl:tracking-normal">{t.hero.eyebrow}</p>
-          <span className="mt-4 block h-0.5 w-8 bg-[#C51E28]" aria-hidden />
-        </div>
-        <div className="lg:col-span-6">
-          <h2 id="impact-teaser-title" className="font-display text-[clamp(1.8rem,3vw,2.8rem)] leading-tight text-[#14171A]">
-            {t.hero.titleLines[0]}{" "}
-            <span className="italic text-[#C51E28]">{t.hero.titleLines[1].replace(/\*/g, "")}</span>
-          </h2>
-          <p className="mt-4 max-w-xl text-[14.5px] leading-relaxed text-[#687076]">{t.hero.body}</p>
-        </div>
-        <div className="lg:col-span-4 lg:justify-self-end">
-          <Link
-            href={`/${locale}/growth`}
-            className="group inline-flex min-h-12 items-center gap-3 rounded-full border border-[#14171A]/20 bg-white px-6 text-[13px] font-semibold text-[#14171A] transition-colors hover:border-[#C51E28] hover:text-[#C51E28]"
-          >
-            {ar ? "تعرّف على أثرنا" : "Read about Our Impact"}
-            <ArrowRight aria-hidden className="flip-rtl size-4 transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-          </Link>
-          <p className="mt-3 max-w-xs text-[11.5px] leading-relaxed text-[#8C939B]">{t.status.note}</p>
         </div>
       </div>
     </section>
