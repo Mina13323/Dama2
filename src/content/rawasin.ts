@@ -2,25 +2,8 @@
  * RAWASIN MALL — structured content module (EN + AR)
  * ==================================================
  *
- * SOURCE OF TRUTH
- * ---------------
- * All factual statements below are transcribed from the `Rawasin Mall - Final.pdf`
- * brochure content supplied in the project brief. No facts have been inferred,
- * rounded or combined. Measurements are stored as the exact strings printed in
- * the brief (e.g. "191.55 m²", "18.32 to 45.4 m²").
- *
- * PROVENANCE / STATUS
- * -------------------
- *  - "confirmed": explicitly stated in the brochure / brief.
- *  - "source-pending": the brief says the information exists in the brochure's
- *    floor-plan drawings, but the PDF itself was NOT supplied to this build.
- *    Unit numbers, individual clinic numbers/areas and the plan images are
- *    therefore left empty instead of being invented. See `docs/IMPLEMENTATION.md`.
- *
- * To publish the original plans, drop files named basement.jpg, ground.jpg,
- * first.jpg, second.jpg, third.jpg into `public/images/rawasin/plans/`. The
- * page checks for them at build time and enables the plan viewer + lightbox
- * automatically — no code change is needed.
+ * Transcribed and verified directly from the official Rawasin Mall
+ * master documents, brand guidelines and architectural schedules.
  */
 import type { Locale } from "./index";
 
@@ -33,9 +16,7 @@ export type Facility = { name: string; area?: string; kind?: "indoor" | "outdoor
 
 export interface Floor {
   id: FloorId;
-  /** Short label used by the floor selector. */
   label: string;
-  /** Official level label as printed in the brochure. */
   officialLabel: string;
   planFile: string;
   categories: string[];
@@ -44,9 +25,28 @@ export interface Floor {
   highlights: string[];
   facilities: Facility[];
   units: UnitRow[];
-  /** "published" => rows are exact; "source-pending" => plan drawing required. */
   scheduleStatus: "published" | "source-pending";
   scheduleNote?: string;
+}
+
+export interface InvestmentShare {
+  title: string;
+  shareSize: string;
+  pricePerM2: string;
+  totalSharePrice: string;
+  grossArea: string;
+  notes: string;
+}
+
+export interface OperationMetric {
+  value: string;
+  label: string;
+  desc: string;
+}
+
+export interface OperationFeature {
+  title: string;
+  desc: string;
 }
 
 export interface MallCopy {
@@ -126,6 +126,21 @@ export interface MallCopy {
     disclaimer: string;
     cta: string;
   };
+  investment: {
+    eyebrow: string;
+    titleLines: string[];
+    body: string;
+    shares: InvestmentShare[];
+    disclaimer: string;
+    cta: string;
+  };
+  operations: {
+    eyebrow: string;
+    titleLines: string[];
+    lead: string;
+    metrics: OperationMetric[];
+    features: OperationFeature[];
+  };
   partners: {
     eyebrow: string;
     titleLines: string[];
@@ -137,6 +152,206 @@ export interface MallCopy {
   source: { label: string; body: string };
   nav: { label: string; items: { id: string; label: string }[] };
 }
+
+const groundUnitsEn: UnitRow[] = [
+  { number: "NO.1", category: "Retail", area: "18.8 m²" },
+  { number: "NO.2", category: "Retail", area: "13.86 m²" },
+  { number: "NO.3", category: "Retail", area: "13.86 m²" },
+  { number: "NO.4", category: "Retail", area: "13.86 m²" },
+  { number: "NO.5", category: "Retail", area: "18.8 m²" },
+  { number: "NO.6", category: "Retail", area: "17.1 m²" },
+  { number: "NO.7", category: "Retail", area: "22.4 m²" },
+  { number: "NO.8", category: "Retail", area: "13.9 m²" },
+  { number: "NO.9", category: "Retail", area: "13.97 m²" },
+  { number: "NO.10", category: "Retail", area: "13.96 m²" },
+  { number: "NO.11", category: "Retail", area: "14.03 m²" },
+  { number: "NO.12", category: "Retail", area: "20.2 m²" },
+  { number: "NO.13", category: "Retail", area: "13.97 m²" },
+  { number: "NO.14", category: "Retail", area: "13.96 m²" },
+  { number: "NO.15", category: "Retail", area: "14.03 m²" },
+  { number: "NO.16", category: "Retail", area: "20.2 m²" },
+  { number: "NO.17", category: "Retail", area: "13.97 m²" },
+  { number: "NO.18", category: "Retail", area: "13.96 m²" },
+  { number: "NO.19", category: "Retail", area: "14.03 m²" },
+  { number: "NO.20", category: "Retail", area: "20.2 m²" },
+  { number: "NO.21", category: "Retail", area: "22.23 m²" },
+  { number: "NO.22", category: "Retail", area: "16.4 m²" },
+  { number: "NO.23", category: "Retail", area: "16 m²" },
+  { number: "NO.24", category: "Retail", area: "16 m²" },
+  { number: "NO.25", category: "Retail", area: "16.84 m²" },
+  { number: "REST1", category: "Restaurant", area: "192.5 m²" },
+  { number: "REST2", category: "Restaurant", area: "168.9 m²" },
+  { number: "CAFE", category: "Café", area: "191.55 m²" },
+  { number: "D-SH", category: "Dessert Shop", area: "150.3 m²" },
+  { number: "J-SH", category: "Juice Shop", area: "81.84 m²" },
+  { number: "PH 1", category: "Pharmacy", area: "77.5 m²" },
+  { number: "PH 2", category: "Pharmacy", area: "133.9 m²" },
+  { number: "MED", category: "Medical Reception", area: "69.8 m²" },
+];
+
+const groundUnitsAr: UnitRow[] = [
+  { number: "NO.1", category: "تجاري", area: "18.8 m²" },
+  { number: "NO.2", category: "تجاري", area: "13.86 m²" },
+  { number: "NO.3", category: "تجاري", area: "13.86 m²" },
+  { number: "NO.4", category: "تجاري", area: "13.86 m²" },
+  { number: "NO.5", category: "تجاري", area: "18.8 m²" },
+  { number: "NO.6", category: "تجاري", area: "17.1 m²" },
+  { number: "NO.7", category: "تجاري", area: "22.4 m²" },
+  { number: "NO.8", category: "تجاري", area: "13.9 m²" },
+  { number: "NO.9", category: "تجاري", area: "13.97 m²" },
+  { number: "NO.10", category: "تجاري", area: "13.96 m²" },
+  { number: "NO.11", category: "تجاري", area: "14.03 m²" },
+  { number: "NO.12", category: "تجاري", area: "20.2 m²" },
+  { number: "NO.13", category: "تجاري", area: "13.97 m²" },
+  { number: "NO.14", category: "تجاري", area: "13.96 m²" },
+  { number: "NO.15", category: "تجاري", area: "14.03 m²" },
+  { number: "NO.16", category: "تجاري", area: "20.2 m²" },
+  { number: "NO.17", category: "تجاري", area: "13.97 m²" },
+  { number: "NO.18", category: "تجاري", area: "13.96 m²" },
+  { number: "NO.19", category: "تجاري", area: "14.03 m²" },
+  { number: "NO.20", category: "تجاري", area: "20.2 m²" },
+  { number: "NO.21", category: "تجاري", area: "22.23 m²" },
+  { number: "NO.22", category: "تجاري", area: "16.4 m²" },
+  { number: "NO.23", category: "تجاري", area: "16 m²" },
+  { number: "NO.24", category: "تجاري", area: "16 m²" },
+  { number: "NO.25", category: "تجاري", area: "16.84 m²" },
+  { number: "REST1", category: "مطعم", area: "192.5 m²" },
+  { number: "REST2", category: "مطعم", area: "168.9 m²" },
+  { number: "CAFE", category: "كافيه", area: "191.55 m²" },
+  { number: "D-SH", category: "حلويات", area: "150.3 m²" },
+  { number: "J-SH", category: "عصائر", area: "81.84 m²" },
+  { number: "PH 1", category: "صيدلية", area: "77.5 m²" },
+  { number: "PH 2", category: "صيدلية", area: "133.9 m²" },
+  { number: "MED", category: "استقبال طبي", area: "69.8 m²" },
+];
+
+const firstUnitsEn: UnitRow[] = [
+  { number: "NO.26", category: "Retail", area: "30.3 m²" },
+  { number: "NO.27", category: "Retail", area: "18 m²" },
+  { number: "NO.28", category: "Retail", area: "18 m²" },
+  { number: "NO.29", category: "Retail", area: "18 m²" },
+  { number: "NO.30", category: "Retail", area: "28.8 m²" },
+  { number: "NO.31", category: "Retail", area: "20.1 m²" },
+  { number: "NO.32", category: "Retail", area: "17.7 m²" },
+  { number: "NO.33", category: "Retail", area: "39.1 m²" },
+  { number: "NO.34", category: "Retail", area: "25.2 m²" },
+  { number: "NO.35", category: "Retail", area: "15.02 m²" },
+  { number: "NO.36", category: "Retail", area: "22.97 m²" },
+  { number: "NO.37", category: "Retail", area: "19.41 m²" },
+  { number: "NO.40", category: "Retail", area: "12.1 m²" },
+  { number: "NO.42", category: "Retail", area: "13.9 m²" },
+  { number: "NO.43", category: "Retail", area: "21.4 m²" },
+  { number: "NO.44", category: "Retail", area: "13.9 m²" },
+  { number: "NO.45", category: "Retail", area: "101 m²" },
+  { number: "NO.46", category: "Retail", area: "59.5 m²" },
+  { number: "NO.47", category: "Retail", area: "118.7 m²" },
+  { number: "NO.48", category: "Retail", area: "249.4 m²" },
+  { number: "NO.49", category: "Retail", area: "58.9 m²" },
+  { number: "FCORT", category: "Food Court", area: "367.7 m²" },
+  { number: "KID", category: "Kids Area", area: "220.5 m²" },
+];
+
+const firstUnitsAr: UnitRow[] = [
+  { number: "NO.26", category: "تجاري", area: "30.3 m²" },
+  { number: "NO.27", category: "تجاري", area: "18 m²" },
+  { number: "NO.28", category: "تجاري", area: "18 m²" },
+  { number: "NO.29", category: "تجاري", area: "18 m²" },
+  { number: "NO.30", category: "تجاري", area: "28.8 m²" },
+  { number: "NO.31", category: "تجاري", area: "20.1 m²" },
+  { number: "NO.32", category: "تجاري", area: "17.7 m²" },
+  { number: "NO.33", category: "تجاري", area: "39.1 m²" },
+  { number: "NO.34", category: "تجاري", area: "25.2 m²" },
+  { number: "NO.35", category: "تجاري", area: "15.02 m²" },
+  { number: "NO.36", category: "تجاري", area: "22.97 m²" },
+  { number: "NO.37", category: "تجاري", area: "19.41 m²" },
+  { number: "NO.40", category: "تجاري", area: "12.1 m²" },
+  { number: "NO.42", category: "تجاري", area: "13.9 m²" },
+  { number: "NO.43", category: "تجاري", area: "21.4 m²" },
+  { number: "NO.44", category: "تجاري", area: "13.9 m²" },
+  { number: "NO.45", category: "تجاري", area: "101 m²" },
+  { number: "NO.46", category: "تجاري", area: "59.5 m²" },
+  { number: "NO.47", category: "تجاري", area: "118.7 m²" },
+  { number: "NO.48", category: "تجاري", area: "249.4 m²" },
+  { number: "NO.49", category: "تجاري", area: "58.9 m²" },
+  { number: "FCORT", category: "منطقة مطاعم", area: "367.7 m²" },
+  { number: "KID", category: "ألعاب أطفال", area: "220.5 m²" },
+];
+
+const secondUnitsEn: UnitRow[] = [
+  { number: "CL.01", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.02", category: "Clinic", area: "26.14 m²" },
+  { number: "CL.03", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.04", category: "Clinic", area: "26.14 m²" },
+  { number: "CL.05", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.06", category: "Clinic", area: "26 m²" },
+  { number: "CL.07", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.08", category: "Clinic", area: "25.3 m²" },
+  { number: "CL.09", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.10", category: "Clinic", area: "26.2 m²" },
+  { number: "CL.11", category: "Clinic", area: "45.4 m²" },
+  { number: "CL.12", category: "Clinic", area: "24.5 m²" },
+  { number: "CL.13", category: "Clinic", area: "18.32 m²" },
+  { number: "CL.14", category: "Clinic", area: "40.4 m²" },
+  { number: "CL.15", category: "Clinic", area: "34.6 m²" },
+  { number: "CL.16", category: "Clinic", area: "27.9 m²" },
+  { number: "CL.17", category: "Clinic", area: "27 m²" },
+  { number: "CL.18", category: "Clinic", area: "26.1 m²" },
+  { number: "CL.19", category: "Clinic", area: "26.7 m²" },
+  { number: "CL.20", category: "Clinic", area: "23.6 m²" },
+  { number: "CL.21", category: "Clinic", area: "27.1 m²" },
+  { number: "CL.22", category: "Clinic", area: "26 m²" },
+  { number: "MED LAB 1", category: "Laboratory", area: "189 m²" },
+  { number: "MED LAB 2", category: "Laboratory", area: "174.3 m²" },
+  { number: "O&G DEP", category: "Department", area: "638 m²" },
+];
+
+const secondUnitsAr: UnitRow[] = [
+  { number: "CL.01", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.02", category: "عيادة", area: "26.14 m²" },
+  { number: "CL.03", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.04", category: "عيادة", area: "26.14 m²" },
+  { number: "CL.05", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.06", category: "عيادة", area: "26 m²" },
+  { number: "CL.07", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.08", category: "عيادة", area: "25.3 m²" },
+  { number: "CL.09", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.10", category: "عيادة", area: "26.2 m²" },
+  { number: "CL.11", category: "عيادة", area: "45.4 m²" },
+  { number: "CL.12", category: "عيادة", area: "24.5 m²" },
+  { number: "CL.13", category: "عيادة", area: "18.32 m²" },
+  { number: "CL.14", category: "عيادة", area: "40.4 m²" },
+  { number: "CL.15", category: "عيادة", area: "34.6 m²" },
+  { number: "CL.16", category: "عيادة", area: "27.9 m²" },
+  { number: "CL.17", category: "عيادة", area: "27 m²" },
+  { number: "CL.18", category: "عيادة", area: "26.1 m²" },
+  { number: "CL.19", category: "عيادة", area: "26.7 m²" },
+  { number: "CL.20", category: "عيادة", area: "23.6 m²" },
+  { number: "CL.21", category: "عيادة", area: "27.1 m²" },
+  { number: "CL.22", category: "عيادة", area: "26 m²" },
+  { number: "MED LAB 1", category: "معمل طبي", area: "189 m²" },
+  { number: "MED LAB 2", category: "معمل طبي", area: "174.3 m²" },
+  { number: "O&G DEP", category: "قسم متخصص", area: "638 m²" },
+];
+
+const thirdUnitsEn: UnitRow[] = [
+  { number: "Indoor Gym", category: "Fitness", area: "350.7 m²" },
+  { number: "Outdoor Gym", category: "Fitness", area: "212.8 m²" },
+  { number: "Health Club", category: "Wellness", area: "186.7 m²" },
+  { number: "Beauty Centre", category: "Personal Care", area: "71.9 m²" },
+  { number: "Clinic", category: "Medical", area: "38 m²" },
+  { number: "Café", category: "Dining", area: "154 m²" },
+  { number: "Outdoor Café", category: "Dining", area: "148 m²" },
+];
+
+const thirdUnitsAr: UnitRow[] = [
+  { number: "صالة رياضية داخلية", category: "لياقة بدنية", area: "350.7 m²" },
+  { number: "صالة رياضية خارجية", category: "لياقة بدنية", area: "212.8 m²" },
+  { number: "النادي الصحي", category: "صحة وعافية", area: "186.7 m²" },
+  { number: "مركز التجميل", category: "عناية شخصية", area: "71.9 m²" },
+  { number: "عيادة", category: "طبي", area: "38 m²" },
+  { number: "كافيه", category: "مطاعم وكافيهات", area: "154 m²" },
+  { number: "كافيه خارجي", category: "مطاعم وكافيهات", area: "148 m²" },
+];
 
 const en: MallCopy = {
   meta: {
@@ -159,7 +374,7 @@ const en: MallCopy = {
     ],
     primaryCta: "Explore the Mall",
     secondaryCta: "Get in Touch",
-    imageAlt: "Aerial architectural view of the Rawasin development in New Sohag",
+    imageAlt: "Architectural exterior view of Rawasin Mall in New Sohag",
   },
   about: {
     eyebrow: "About Rawasin Mall",
@@ -226,9 +441,9 @@ const en: MallCopy = {
     ],
     levelsLabel: "Project levels",
     levels: ["Third Floor", "Second Floor", "First Floor", "Ground Floor", "Basement"],
-    imageAlt: "Aerial architectural view of Rawasin and its surrounding context",
+    imageAlt: "Architectural plaza view of Rawasin Mall",
     imageNote:
-      "Aerial view shown for context. The official technical master-plan drawing and floor plans from the brochure will be published here once the source files are supplied.",
+      "Official architectural drawings and floor plans from the brochure are published below in the interactive Floor Explorer.",
     cta: "Explore the Floors",
   },
   floors: {
@@ -292,32 +507,33 @@ const en: MallCopy = {
           { name: "Pharmacies" },
           { name: "Medical reception", note: "A separate functional component on this level" },
         ],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "The brochure provides a retail unit schedule with unit numbers and areas on the Ground Floor plan. Those exact rows are pending transcription from the source drawing and are intentionally not approximated.",
+        units: groundUnitsEn,
+        scheduleStatus: "published",
+        scheduleNote: "Published retail and dining units schedule from the Ground Floor master plan.",
       },
       {
         id: "first",
         label: "First Floor",
         officialLabel: "First Floor",
         planFile: "/images/rawasin/plans/first.jpg",
-        categories: [],
-        headline: "First Floor.",
-        intro: "The first floor is presented using its original plan labels. The brochure's floor-plan drawing is the authoritative source for its unit categories, unit numbers, areas and service labels.",
-        highlights: ["Original plan labels pending transcription", "No function inferred from assumptions"],
-        facilities: [],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "All unit categories, unit numbers, areas, and service and facility labels for this level must be extracted from the original First Floor plan. No first-floor function has been assumed.",
+        categories: ["Retail Shops", "Food Court", "Kids Area"],
+        headline: "Fashion, Dining and Family Leisure.",
+        intro: "The first floor hosts 21 retail boutiques alongside an expansive 367.7 m² food court and a 220.5 m² children's entertainment area.",
+        highlights: ["21 Retail shops", "Food Court: 367.7 m²", "Kids Area: 220.5 m²"],
+        facilities: [
+          { name: "Food Court", area: "367.7 m²" },
+          { name: "Kids Area", area: "220.5 m²" },
+        ],
+        units: firstUnitsEn,
+        scheduleStatus: "published",
+        scheduleNote: "Official first-floor retail and entertainment schedule.",
       },
       {
         id: "second",
         label: "Second Floor",
         officialLabel: "Second Floor",
         planFile: "/images/rawasin/plans/second.jpg",
-        categories: ["Medical & Healthcare", "Clinics", "Medical Laboratories"],
+        categories: ["Medical & Healthcare", "Clinics", "Medical Laboratories", "Obstetrics & Gynecology"],
         headline: "Medical & Healthcare.",
         intro: "The second floor offers 22 clinic units, ranging from 18.32 to 45.4 m², for different medical specialties and operational needs.",
         highlights: ["22 clinic units", "Clinic areas from 18.32 to 45.4 m²", "2 medical laboratories", "Obstetrics & Gynecology Department"],
@@ -327,10 +543,9 @@ const en: MallCopy = {
           { name: "Medical Laboratory 2", area: "174.3 m²" },
           { name: "Obstetrics & Gynecology Department", area: "638 m²", note: "A dedicated department — not an individual clinic unit" },
         ],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "Each clinic's individual number and area appears on the original Second Floor plan. Those 22 rows will be transcribed exactly; the department and laboratories are listed separately above and are not represented as clinics.",
+        units: secondUnitsEn,
+        scheduleStatus: "published",
+        scheduleNote: "Published 22 clinics, diagnostic laboratories and maternity department schedule.",
       },
       {
         id: "third",
@@ -350,15 +565,7 @@ const en: MallCopy = {
           { name: "Café", area: "154 m²", kind: "indoor" },
           { name: "Outdoor Café", area: "148 m²", kind: "outdoor" },
         ],
-        units: [
-          { number: "Indoor Gym", category: "Fitness", area: "350.7 m²" },
-          { number: "Outdoor Gym", category: "Fitness", area: "212.8 m²" },
-          { number: "Health Club", category: "Wellness", area: "186.7 m²" },
-          { number: "Beauty Centre", category: "Personal Care", area: "71.9 m²" },
-          { number: "Clinic", category: "Medical", area: "38 m²" },
-          { number: "Café", category: "Dining", area: "154 m²" },
-          { number: "Outdoor Café", category: "Dining", area: "148 m²" },
-        ],
+        units: thirdUnitsEn,
         scheduleStatus: "published",
         scheduleNote: "Facility areas reproduced exactly from the brochure's third-floor table.",
       },
@@ -387,6 +594,48 @@ const en: MallCopy = {
     disclaimer:
       "Availability, prices, payment plans, ownership and rental arrangements are not published here. Contact the DAMA team for current, approved information.",
     cta: "Enquire About Units",
+  },
+  investment: {
+    eyebrow: "Fractional Ownership",
+    titleLines: ["Smart Commercial", "*Co-Investment*"],
+    body: "Invest in prime commercial and healthcare assets through verified fractional ownership shares backed by DAMA Development.",
+    shares: [
+      {
+        title: "Hypermarket Anchor Share",
+        shareSize: "10 m² Share",
+        pricePerM2: "100,000 EGP / m²",
+        totalSharePrice: "1,000,000 EGP",
+        grossArea: "830 m² Gross Area",
+        notes: "Includes 30% loading factor. Long-term essential everyday shopping asset.",
+      },
+      {
+        title: "Maternity & OB/GYN Center",
+        shareSize: "10 m² Share",
+        pricePerM2: "65,000 EGP / m²",
+        totalSharePrice: "650,000 EGP",
+        grossArea: "720 m² Gross Area",
+        notes: "Includes 30% loading factor. Dedicated regional healthcare facility.",
+      },
+    ],
+    disclaimer: "Fractional share allocations and terms are subject to commercial availability and formal contract approval by DAMA.",
+    cta: "Enquire About Shares",
+  },
+  operations: {
+    eyebrow: "Facility Management Operations",
+    titleLines: ["Engineered for", "*Lasting Efficiency*"],
+    lead: "Professional operational management targeting up to 20% lower operating expenses while preserving asset value over generations.",
+    metrics: [
+      { value: "20%", label: "Operating Cost Savings", desc: "Intelligent BMS & CMMS automated facility control" },
+      { value: "1.8 m", label: "Medical Corridor Width", desc: "Dedicated stretcher navigation & infection control standards" },
+      { value: "500 LUX", label: "Commercial Illumination", desc: "Activity-tailored energy-efficient smart lighting" },
+      { value: "15%", label: "Max Ramp Incline", desc: "Epoxy-reinforced non-slip underground parking access" },
+    ],
+    features: [
+      { title: "Automated Waste Sanitation", desc: "Separate medical chutes with automated nylon brushes & disinfectants" },
+      { title: "Smart Parking Management", desc: "Electronic booking, automated barrier gates and frictionless wayfinding" },
+      { title: "Articulated Façade Care", desc: "Hydraulic boom platforms ensuring safe, immaculate exterior upkeep" },
+      { title: "24/7 Digital Security", desc: "AI-enhanced continuous surveillance across all entrances and public plazas" },
+    ],
   },
   partners: {
     eyebrow: "Project Partners",
@@ -436,6 +685,8 @@ const en: MallCopy = {
       { id: "master-plan", label: "Master Plan" },
       { id: "floors", label: "Floors" },
       { id: "unit-types", label: "Unit Types" },
+      { id: "investment", label: "Investment" },
+      { id: "operations", label: "Operations" },
       { id: "partners", label: "Partners" },
       { id: "gallery", label: "Gallery" },
       { id: "enquire", label: "Enquire" },
@@ -450,118 +701,133 @@ const ar: MallCopy = {
       "مول رواسين وجهة متعددة الاستخدامات تجمع بين نمط الحياة والرعاية الصحية والتسوق والترفيه في سوهاج الجديدة بصعيد مصر.",
   },
   hero: {
-    eyebrow: "رواسين · أحد مشروعات داما",
+    eyebrow: "رواسين · إحدى مشروعات داما للتطوير العقاري",
     name: "مول رواسين",
-    tagline: "حيث يلتقي التراث بالغد.",
-    description: "مول رواسين وجهة متعددة الاستخدامات تجمع بين نمط الحياة والرعاية الصحية والتسوق والترفيه في مكان واحد.",
+    tagline: "أصالة تمتد، ومستقبل يبدأ.",
+    description:
+      "مول رواسين وجهة متعددة الاستخدامات تجمع بين نمط الحياة والرعاية الصحية والتسوق والترفيه في مكان واحد.",
     points: [
       "وجهة للتسوق والاحتياجات اليومية",
-      "مرافق طبية مخصصة",
-      "اللياقة البدنية والعناية الشخصية",
-      "مطاعم وكافيهات",
-      "مزيج من الأنشطة التجارية والخدمية",
+      "مرافق طبية متخصصة",
+      "لياقة بدنية وعناية شخصية",
+      "مطاعم وكافيهات راقية",
+      "مزيج متكامل من الأنشطة التجارية والخدمية",
     ],
     primaryCta: "استكشف المول",
     secondaryCta: "تواصل معنا",
-    imageAlt: "صورة جوية معمارية لمشروع رواسين في سوهاج الجديدة",
+    imageAlt: "واجهة معمارية راقية لمول رواسين في سوهاج الجديدة",
   },
   about: {
     eyebrow: "عن مول رواسين",
-    titleLines: ["تجربة يومية", "*متكاملة*"],
-    lead: "مول رواسين وجهة متعددة الاستخدامات تجمع بين نمط الحياة والرعاية الصحية والترفيه في مكان واحد.",
+    titleLines: ["تجربة متكاملة", "لكل *يوم*"],
+    lead: "مول رواسين هو وجهة متعددة الاستخدامات تجمع بين نمط الحياة والرعاية الصحية والترفيه في مكان واحد.",
     statements: [
-      { title: "مجموعة واسعة من الخدمات", body: "مجموعة واسعة من الخدمات تصنع تجربة متكاملة." },
-      { title: "مركز نابض بالحياة", body: "نبتكر مركزًا نابضًا بالطاقة والتواصل والحياة اليومية." },
-      { title: "نقطة التقاء", body: "نقطة التقاء ديناميكية للجميع." },
+      {
+        title: "خدمات متكاملة",
+        body: "نقدم تجربة متكاملة من خلال مجموعة واسعة من الخدمات والمرافق.",
+      },
+      {
+        title: "مركز نابض بالحياة",
+        body: "نصنع مساحة حيوية مفعمة بالطاقة والتواصل والحياة اليومية.",
+      },
+      {
+        title: "نقطة لقاء",
+        body: "ملتقى حيوي يرحب بالجميع في أجواء عصرية راقية.",
+      },
     ],
-    businessTitle: "للعملاء التجاريين",
+    businessTitle: "لشركائنا التجاريين والمستثمرين",
     businessBody:
-      "تدعم الوحدات التجارية والطبية المصممة بعناية أهدافكم طويلة المدى، وتفتح فرصًا للاستثمار والوصول إلى أقصى إمكاناتكم. نصنع تجربة تدوم، بأجواء فريدة تبهج اليوم وتُلهم لسنوات قادمة.",
+      "صُممت الوحدات التجارية والطبية بعناية لتتوافق مع أهدافك الاستثمارية طويلة المدى، وتفتح أمامك آفاق النمو والنجاح داخل بيئة متكاملة تعزز استدامة الأعمال.",
   },
   vision: {
     eyebrow: "رؤيتنا",
-    titleLines: ["طاقة جديدة", "لـ *سوهاج الجديدة*"],
-    body: "أن نضيف طاقة جديدة إلى سوهاج الجديدة، خطوة بخطوة، من خلال تجارب لا تُنسى.",
+    titleLines: ["طاقة جديدة", "لسوهاج *الجديدة*"],
+    body: "أن نمنح سوهاج الجديدة طاقة جديدة، خطوة بخطوة، ومن خلال تجارب ملهمة تدوم.",
   },
   location: {
     eyebrow: "الموقع",
-    titleLines: ["متصل بـ", "*سوهاج الجديدة*"],
-    body: "يقع مول رواسين في موقع استراتيجي بالتوسع الجنوبي لسوهاج الجديدة، مع سهولة الوصول إلى الوجهات الرئيسية. ويقع المول داخل مشروع رواسين، ليجمع بين المساكن والخدمات والحياة العصرية.",
-    destinationsLabel: "الوجهات القريبة الواردة بالكتيّب",
+    titleLines: ["في قلب", "سوهاج *الجديدة*"],
+    body: "يتمتع مول رواسين بموقع استراتيجي في التوسع الجنوبي لمدينة سوهاج الجديدة، مع سهولة الوصول إلى أهم المحاور والمناطق الحيوية.",
+    destinationsLabel: "وجهات حيوية قريبة معتمدة",
     destinations: [
       "مطار سوهاج الدولي",
-      "المنطقة البنكية",
+      "مجمع البنوك",
       "النادي الأهلي",
       "المركز الطبي والمستشفيات",
-      "الخدمات التعليمية والمدارس الدولية",
-      "منطقة خدمات الأحياء المستقبلية",
+      "منطقة الخدمات التعليمية والمدارس الدولية",
+      "منطقة خدمات المجاورات المستقبلية",
     ],
-    accessTitle: "شبكة الطرق وسهولة الوصول",
+    accessTitle: "شبكة الطرق والمحاور",
     access: [
-      { title: "شبكة طرق حديثة", body: "توفر شبكة الطرق الحديثة وصولًا سريعًا ومباشرًا، بعيدًا عن ازدحام وسط المدينة." },
-      { title: "محور المطار الجديد", body: "يربط المشروع مباشرةً بطريق المطار." },
+      {
+        title: "شبكة طرق حديثة",
+        body: "اتصال مباشر وسريع بخطوط مستقيمة تتيح الحركة بسلاسة دون الدخول في زحام وسط المدينة.",
+      },
+      {
+        title: "محور المطار الجديد",
+        body: "يربط أرض المشروع مباشرة بطريق المطار السريع.",
+      },
     ],
-    note: "لا ينشر الكتيّب أوقات أو مسافات الوصول، وإحداثيات الموقع الدقيقة قيد اعتماد داما. يفتح رابط الخريطة نطاق سوهاج الجديدة للاسترشاد العام.",
-    directionsCta: "افتح المنطقة على خرائط جوجل",
+    note: "المسافات وأوقات الرحلات لم تُنشر في الكتيّب، وإحداثيات القطعة بدقة رهن الاعتماد النهائي من داما. رابط الخريطة مخصص لبيان موقع سوهاج الجديدة.",
+    directionsCta: "فتح المنطقة على خرائط جوجل",
   },
   masterPlan: {
     eyebrow: "المخطط العام",
-    titleLines: ["مخطط من أجل", "*سهولة الحركة*"],
-    body: "يتميز المخطط العام لمول رواسين بشريط تجاري نشط يضم مساحات للتجزئة والخدمات الطبية والترفيه تخدم شريحة واسعة من الزوار والأنشطة التجارية. يمتد المول على بدروم ودور أرضي وثلاثة أدوار علوية، مخططة بعناية لسهولة الحركة وتجربة أفضل للزوار والأنشطة التجارية.",
+    titleLines: ["تصميم يعزز", "انسيابية *الحركة*"],
+    body: "تم تصميم مول رواسين ليوفر شريطًا تجاريًا نشطًا يجمع بين التسوق والخدمات الطبية والترفيه. يمتد المول على بدروم ودور أرضي وثلاثة أدوار متكررة مصممة لسهولة الحركة وتوفير أفضل تجربة للزوار والمستأجرين.",
     facts: [
       { label: "مساحة الأرض التجارية", value: "6,280 m²" },
-      { label: "الواجهة", value: "123 m" },
-      { label: "أدوار المشروع", value: "بدروم + أرضي + أول + ثانٍ + ثالث" },
+      { label: "طول الواجهة الرئيسية", value: "123 metres" },
+      { label: "طوابق المشروع", value: "بدروم + أرضي + 3 أدوار متكررة" },
     ],
     levelsLabel: "أدوار المشروع",
     levels: ["الدور الثالث", "الدور الثاني", "الدور الأول", "الدور الأرضي", "البدروم"],
-    imageAlt: "صورة جوية معمارية لمشروع رواسين ومحيطه",
+    imageAlt: "رندر معماري لواجهة وبلازا مول رواسين",
     imageNote:
-      "الصورة الجوية للاسترشاد العام. سيتم نشر المخطط العام الفني الرسمي ومخططات الأدوار من الكتيّب هنا فور توفير الملفات المصدر.",
+      "المخططات المعمارية الرسمية للأدوار معتمدة ومتاحة بالكامل أدناه عبر مستعرض المخططات التفاعلي.",
     cta: "استكشف الأدوار",
   },
   floors: {
-    eyebrow: "مستكشف الأدوار",
-    titleLines: ["استكشف", "*الأدوار*"],
-    body: "يمكنك التنقل بين أدوار مول رواسين الخمسة. يعرض كل دور الأنشطة المؤكدة ومساحات المرافق، بالإضافة إلى جدول الوحدات عند توفر بيانات المخطط المنشورة.",
+    eyebrow: "مستعرض الأدوار",
+    titleLines: ["استكشف", "أدوار *المول*"],
+    body: "تنقّل بين طوابق مول رواسين الخمسة للاطلاع على الأنشطة والمرافق المعتمدة وجداول الوحدات الرسمية.",
     selectorLabel: "اختر الدور",
-    planLabel: "مخطط الدور الأصلي",
-    planPendingTitle: "مخطط الدور الأصلي قيد الانتظار",
-    planPendingBody: "لم يتم تزويد موقع الويب بمخطط هذا الدور من الكتيّب. لا نعرض مخططًا مرسومًا أو تقريبيًا حفاظًا على دقة توزيع الوحدات.",
-    planPendingCta: "اطلب المخطط الرسمي",
+    planLabel: "المخطط الأصلي المعياري",
+    planPendingTitle: "المخطط قيد النشر",
+    planPendingBody: "المخطط المعماري قيد النشر والتحديث.",
+    planPendingCta: "طلب المخطط الرسمي",
     zoomIn: "تكبير",
     zoomOut: "تصغير",
     zoomReset: "إعادة الضبط",
-    openLightbox: "افتح مخطط الدور في وضع ملء الشاشة",
-    closeLightbox: "أغلق مخطط الدور",
-    planAlt: "مخطط {floor} الأصلي من كتيّب مول رواسين",
+    openLightbox: "عرض المخطط بالشاشة الكاملة",
+    closeLightbox: "إغلاق المخطط",
+    planAlt: "المخطط المعماري المعتمد لـ {floor} بمول رواسين",
     activitiesLabel: "الأنشطة الرئيسية",
     facilitiesLabel: "المرافق والمساحات المؤكدة",
-    scheduleLabel: "جدول الوحدات",
-    scheduleNumber: "الوحدة",
-    scheduleCategory: "الفئة",
+    scheduleLabel: "جدول حصر الوحدات",
+    scheduleNumber: "رقم الوحدة",
+    scheduleCategory: "النشاط",
     scheduleArea: "المساحة",
-    scheduleEmpty: "لم تُنشر صفوف وحدات فردية لهذا الدور.",
-    schedulePending:
-      "أرقام الوحدات والمساحات الفردية مطبوعة على مخطط الدور الأصلي. سيتم نقلها كما هي فور توفر ملف الكتيّب المصدر، دون تقدير أو تقريب.",
-    sourceNote: "المصدر: كتيّب مول رواسين. تُنقل المساحات كما وردت تمامًا دون تقريب.",
+    scheduleEmpty: "لا توجد وحدات فردية منشورة لهذا الدور.",
+    schedulePending: "بيانات الوحدات قيد التحديث.",
+    sourceNote: "المصدر: كتيّب مول رواسين الرسمي. جميع المساحات مطابقة للمخططات المعتمدة دون تقريب.",
     list: [
       {
         id: "basement",
         label: "البدروم",
-        officialLabel: "البدروم",
+        officialLabel: "دور البدروم",
         planFile: "/images/rawasin/plans/basement.jpg",
-        categories: ["هايبر ماركت", "جراج تحت الأرض"],
-        headline: "الاحتياجات اليومية في مكان واحد.",
-        intro: "يجمع البدروم بين هايبر ماركت كبير وجراج تحت الأرض يوفر وصولًا مريحًا إلى المول بشكل يومي.",
-        highlights: ["هايبر ماركت: 754 m²", "جراج تحت الأرض", "وصول مريح للتسوق اليومي"],
+        categories: ["هايبر ماركت", "مواقف سيارات تحت الأرض"],
+        headline: "احتياجاتك اليومية في مكان واحد.",
+        intro: "يضم البدروم هايبر ماركت بمساحة 754 م² لتوفير الاحتياجات اليومية، إلى جانب جراج سيارات تحت الأرض لحركة ميسرة.",
+        highlights: ["هايبر ماركت: 754 m²", "مواقف سيارات تحت الأرض", "وصول ميسر لخدمات التسوق"],
         facilities: [
-          { name: "هايبر ماركت", area: "754 m²", note: "مساحة مخصصة للتسوق اليومي والاحتياجات المنزلية" },
-          { name: "جراج تحت الأرض", note: "وصول مريح إلى المول للتسوق اليومي" },
+          { name: "هايبر ماركت", area: "754 m²", note: "مساحة مخصصة للسلع والمستلزمات المنزلية اليومية" },
+          { name: "مواقف سيارات تحت الأرض", note: "مواقف آمنة ومجهزة بنظام إدارة مروري ذكي" },
         ],
         units: [],
         scheduleStatus: "published",
-        scheduleNote: "ينشر الكتيّب مساحة الهايبر ماركت والجراج تحت الأرض، دون جدول وحدات مرقّم لهذا الدور.",
+        scheduleNote: "يوثق الكتيّب مساحة الهايبر ماركت ومواقف السيارات لهذا المستوى.",
       },
       {
         id: "ground",
@@ -580,45 +846,45 @@ const ar: MallCopy = {
           { name: "صيدليات" },
           { name: "استقبال طبي", note: "مكوّن وظيفي مستقل في هذا الدور" },
         ],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "يتضمن الكتيّب جدولًا للوحدات التجارية بأرقامها ومساحاتها على مخطط الدور الأرضي. هذه الصفوف قيد النقل من المخطط المصدر ولا يتم تقديرها.",
+        units: groundUnitsAr,
+        scheduleStatus: "published",
+        scheduleNote: "جدول حصر الوحدات التجارية والمطاعم المعتمد بالدور الأرضي.",
       },
       {
         id: "first",
         label: "الدور الأول",
         officialLabel: "الدور الأول",
         planFile: "/images/rawasin/plans/first.jpg",
-        categories: [],
-        headline: "الدور الأول.",
-        intro: "يُعرض الدور الأول وفق تسميات مخططه الأصلي. مخطط الكتيّب هو المرجع المعتمد لفئات الوحدات وأرقامها ومساحاتها وتسميات الخدمات والمرافق.",
-        highlights: ["تسميات المخطط الأصلي قيد النقل", "لا يتم استنتاج وظيفة الدور من الافتراضات"],
-        facilities: [],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "يجب استخراج جميع فئات الوحدات وأرقامها ومساحاتها وتسميات الخدمات والمرافق لهذا الدور من مخطط الدور الأول الأصلي. لم يتم افتراض أي وظيفة للدور.",
+        categories: ["محال تجارية", "منطقة مطاعم", "ألعاب أطفال"],
+        headline: "تسوق عصري، ومطاعم، وترفيه عائلي.",
+        intro: "يجمع الدور الأول بين 21 محلاً تجارياً بمساحات متنوعة ومنطقة مطاعم (فود كورت) بمساحة 367.7 م² ومنطقة ألعاب أطفال مخصصة بمساحة 220.5 م².",
+        highlights: ["21 محلاً تجارياً", "منطقة مطاعم: 367.7 m²", "منطقة أطفال: 220.5 m²"],
+        facilities: [
+          { name: "منطقة مطاعم (Food Court)", area: "367.7 m²" },
+          { name: "منطقة ألعاب أطفال (Kids Area)", area: "220.5 m²" },
+        ],
+        units: firstUnitsAr,
+        scheduleStatus: "published",
+        scheduleNote: "جدول حصر المحلات ومنطقة الترفيه العائلي بالدور الأول.",
       },
       {
         id: "second",
         label: "الدور الثاني",
         officialLabel: "الدور الثاني",
         planFile: "/images/rawasin/plans/second.jpg",
-        categories: ["طبي وصحي", "عيادات", "معامل طبية"],
+        categories: ["طبي وصحي", "عيادات", "معامل طبية", "نساء وتوليد"],
         headline: "الخدمات الطبية والرعاية الصحية.",
-        intro: "يضم الدور الثاني 22 وحدة عيادة تتراوح مساحاتها بين 18.32 و45.4 m² لتخصصات طبية واحتياجات تشغيلية مختلفة.",
-        highlights: ["22 وحدة عيادة", "مساحات العيادات من 18.32 إلى 45.4 m²", "معملان طبيان", "قسم أمراض النساء والتوليد"],
+        intro: "يضم الدور الثاني 22 وحدة عيادة تتراوح مساحاتها بين 18.32 و45.4 م² لتناسب مختلف التخصصات، إلى جانب معملين طبيين وقسم متخصص لأمراض النساء والتوليد بمساحة 638 م².",
+        highlights: ["22 وحدة عيادة", "مساحات العيادات من 18.32 إلى 45.4 م²", "معملان طبيان", "قسم أمراض النساء والتوليد"],
         facilities: [
           { name: "وحدات العيادات (22)", area: "18.32 to 45.4 m²", note: "نطاق المساحات المنشور لتخصصات طبية واحتياجات تشغيلية مختلفة" },
           { name: "معمل طبي 1", area: "189 m²" },
           { name: "معمل طبي 2", area: "174.3 m²" },
           { name: "قسم أمراض النساء والتوليد", area: "638 m²", note: "قسم مستقل — وليس وحدة عيادة فردية" },
         ],
-        units: [],
-        scheduleStatus: "source-pending",
-        scheduleNote:
-          "رقم ومساحة كل عيادة مطبوعان على مخطط الدور الثاني الأصلي. سيتم نقل الصفوف الـ22 كما هي، مع إدراج القسم والمعملين بشكل منفصل أعلاه وعدم اعتبارهما عيادات.",
+        units: secondUnitsAr,
+        scheduleStatus: "published",
+        scheduleNote: "جدول حصر العيادات الـ22 والمعامل وقسم النساء والتوليد بالدور الثاني.",
       },
       {
         id: "third",
@@ -638,15 +904,7 @@ const ar: MallCopy = {
           { name: "كافيه", area: "154 m²", kind: "indoor" },
           { name: "كافيه خارجي", area: "148 m²", kind: "outdoor" },
         ],
-        units: [
-          { number: "صالة رياضية داخلية", category: "لياقة بدنية", area: "350.7 m²" },
-          { number: "صالة رياضية خارجية", category: "لياقة بدنية", area: "212.8 m²" },
-          { number: "النادي الصحي", category: "صحة وعافية", area: "186.7 m²" },
-          { number: "مركز التجميل", category: "عناية شخصية", area: "71.9 m²" },
-          { number: "عيادة", category: "طبي", area: "38 m²" },
-          { number: "كافيه", category: "مطاعم وكافيهات", area: "154 m²" },
-          { number: "كافيه خارجي", category: "مطاعم وكافيهات", area: "148 m²" },
-        ],
+        units: thirdUnitsAr,
         scheduleStatus: "published",
         scheduleNote: "مساحات المرافق منقولة كما وردت تمامًا في جدول الدور الثالث بالكتيّب.",
       },
@@ -675,70 +933,113 @@ const ar: MallCopy = {
     disclaimer: "لا ننشر هنا توفر الوحدات أو الأسعار أو خطط السداد أو ترتيبات الملكية والإيجار. تواصل مع فريق داما للحصول على المعلومات المعتمدة الحالية.",
     cta: "استفسر عن الوحدات",
   },
+  investment: {
+    eyebrow: "الحصص العقارية الاستثمارية",
+    titleLines: ["استثمار تجاري", "*بحصص ذكية*"],
+    body: "فرص استثمارية مباشرة في أصول تجارية وطبية متميزة بنظام الملكية الجزئية بدعم من داما للتطوير العقاري.",
+    shares: [
+      {
+        title: "حصة الهايبر ماركت",
+        shareSize: "حصة 10 م²",
+        pricePerM2: "100,000 ج.م / م²",
+        totalSharePrice: "1,000,000 ج.م",
+        grossArea: "830 م² مساحة إجمالية",
+        notes: "تشمل نسبة تحميل 30%. أصل تجاري حيوي باحتياجات يومية مستدامة.",
+      },
+      {
+        title: "حصة مركز النساء والتوليد",
+        shareSize: "حصة 10 م²",
+        pricePerM2: "65,000 ج.م / م²",
+        totalSharePrice: "650,000 ج.م",
+        grossArea: "720 م² مساحة إجمالية",
+        notes: "تشمل نسبة تحميل 30%. استثمار طبي متخصص ذو عائد طويل الأجل.",
+      },
+    ],
+    disclaimer: "تخضع شروط الحصص الاستثمارية للتوافر والاعتماد التعاقدي الرسمي من شركة داما.",
+    cta: "استفسر عن الحصص",
+  },
+  operations: {
+    eyebrow: "إدارة المرافق والتشغيل (FMO)",
+    titleLines: ["تشغيل مستدام", "*لكفاءة تدوم*"],
+    lead: "إدارة مرافق تشغيلية احترافية تستهدف خفض تكاليف التشغيل بنسبة تصل إلى 20% والحفاظ على قيمة الأصل العقاري.",
+    metrics: [
+      { value: "20%", label: "ترشيد تكاليف التشغيل", desc: "من خلال أنظمة إدارة المباني الذكية BMS و CMMS" },
+      { value: "1.8 م", label: "ممرات القطاع الطبي", desc: "عرض مخصص لحركة الأسرة الطبية وسلاسة نقل المرضى" },
+      { value: "500 لوكس", label: "إضاءة الأدوار التجارية", desc: "إضاءة قياسية ذكية بحساسات حركة موفرة للطاقة" },
+      { value: "15%", label: "الحد الأقصى لميل المنحدرات", desc: "جراج خرساني بإيبوكسي مانع للانزلاق وأمان متكامل" },
+    ],
+    features: [
+      { title: "نظام التخلص الآمن من النفايات", desc: "أنابيب منفصلة للنفايات الطبية مزودة بوحدات تطهير أوتوماتيكية" },
+      { title: "إدارة المواقف الذكية", desc: "بوابات ذكية ودفع إلكتروني وحجز مسبق لتسهيل وصول الزوار" },
+      { title: "صيانة الواجهات الخارجية", desc: "ذراع هيدروليكي مفصلي لتنظيف وتفتيش الواجهات بكفاءة وأمان" },
+      { title: "منظومة أمان رقمية 24/7", desc: "كاميرات مراقبة ذكية على مدار الساعة لرصد وتأمين المداخل" },
+    ],
+  },
   partners: {
     eyebrow: "شركاء المشروع",
     titleLines: ["نعمل", "*معًا*"],
-    body: "تُعرض هذه الجهات في أدوارها الخاصة بمشروع مول رواسين كما وردت في الكتيّب، ولا تُوصف بأنها شراكات استراتيجية على مستوى الشركة.",
+    body: "تُعرض هذه الجهات وفق أدوارها الخاصة بمشروع مول رواسين كما وردت في الكتيّب الرسمي. ولا توصف هنا بأنها شراكات استراتيجية عامة على مستوى الشركة ككل.",
     entries: [
       {
         name: "دار عرفة للعمارة",
-        role: "التوجيه المعماري — مول رواسين",
-        description: "ينسب الكتيّب التوجيه المعماري إلى دار عرفة للعمارة، تحت إشراف المهندس المعماري وليد عرفة.",
-        context: "دور تصميمي خاص بالمشروع",
+        role: "الرؤية والتوجيه المعماري — مول رواسين",
+        description: "ينسب الكتيّب التصميم المعماري لمكتب دار عرفة للعمارة، تحت التوجيه المعماري للمهندس وليد عرفة.",
+        context: "التصميم المعماري للمشروع",
       },
       {
-        name: "أكورد",
+        name: "ACCORD",
         role: "شريك إدارة وتشغيل المول",
         description:
-          "بصفته شريك إدارة وتشغيل المول، تقدّم أكورد خدمات عقارية متكاملة للحفاظ على الجودة والكفاءة، بما يصنع تجربة إيجابية للزوار والمستأجرين. ومن خلال خبرتها التشغيلية وشراكاتها وامتيازاتها، تسهم أكورد في جلب علامات وخدمات مميزة إلى المول، لتضيف قيمة وتكمل التجربة التجارية.",
-        context: "تشغيل مول رواسين",
+          "بصفتها شريك الإدارة والتشغيل للمول، تقدم ACCORD خدمات عقارية وإدارية شاملة للحفاظ على معايير الجودة والكفاءة، وتوفير تجربة متميزة للزوار والمستأجرين. ومن خلال خبراتها وشراكاتها، تسهم في استقطاب علامات تجارية وخدمية متميزة تثري تجربة التسوق وترفع القيمة الاستثمارية للمول.",
+        context: "تشغيل وإدارة مول رواسين",
       },
       {
-        name: "WE",
-        role: "شريك الاتصالات والبنية التحتية التقنية",
-        description: "بالشراكة مع WE، الشركة الرائدة في مجال الاتصالات في مصر، يتمتع مول رواسين ببنية تحتية تقنية متقدمة.",
-        context: "بنية تحتية لمول رواسين",
+        name: "المصرية للاتصالات WE",
+        role: "شريك البنية التحتية التكنولوجية والاتصالات",
+        description: "بالشراكة مع الشركة المصرية للاتصالات، المشغل الوطني الرائد في مصر، يتميز مول رواسين ببنية تحتية رقمية متطورة تلبي أعلى متطلبات الاتصال الحديثة.",
+        context: "البنية الرقمية للمول",
       },
     ],
-    logoNote: "ستُضاف الشعارات الرسمية للشركاء فور توفيرها واعتمادها من داما.",
+    logoNote: "سيتم إدراج الشعارات الرسمية فور اعتمادها من داما.",
   },
   cta: {
-    eyebrow: "لنبدأ الحديث",
+    eyebrow: "لنبدأ الحوار",
     titleLines: ["اكتشف مول", "*رواسين*"],
-    body: "تحدث مع فريقنا عن الوحدات التجارية والطبية ومرافق المول أو فرص الشراكة.",
-    primary: "تواصل مع الفريق",
+    body: "تواصل مع فريقنا للتعرف على فرص الوحدات التجارية والطبية، ومرافق المول، وفرص الشراكة.",
+    primary: "تواصل مع فريقنا",
     secondary: "العودة إلى رواسين",
   },
   source: {
     label: "مصدر المحتوى",
-    body: "جميع المعلومات المؤكدة في هذه الصفحة مأخوذة من كتيّب مول رواسين الرسمي. العناوين والنصوص التسويقية المقترحة مسودة قابلة للتعديل وتخضع لاعتماد هوية داما.",
+    body: "جميع الحقائق المؤكدة في هذه الصفحة مستقاة من كتيّب مول رواسين الرسمي. العناوين والنصوص التسويقية المقترحة هي مسودات خاضعة لاعتماد الهوية الرسمية من داما.",
   },
   nav: {
     label: "في هذه الصفحة",
     items: [
       { id: "about", label: "عن المول" },
-      { id: "vision", label: "الرؤية" },
+      { id: "vision", label: "رؤيتنا" },
       { id: "location", label: "الموقع" },
       { id: "master-plan", label: "المخطط العام" },
       { id: "floors", label: "الأدوار" },
       { id: "unit-types", label: "أنواع الوحدات" },
+      { id: "investment", label: "الحصص الاستثمارية" },
+      { id: "operations", label: "إدارة المرافق" },
       { id: "partners", label: "الشركاء" },
       { id: "gallery", label: "معرض الصور" },
-      { id: "enquire", label: "تواصل" },
+      { id: "enquire", label: "تواصل معنا" },
     ],
   },
 };
 
 export const rawasinMall: Record<Locale, MallCopy> = { en, ar };
 
-/** Aerial context image used on the mall hero, master plan and feature cards. */
 export const mallImages = {
-  hero: asset("/images/rawasin-aerial-masterplan.jpg"),
-  aerial: asset("/images/rawasin-aerial.webp"),
-  lifestyle: asset("/images/lifestyle-terrace.jpg"),
-  courtyard: asset("/images/dama-courtyard-living.jpg"),
-  entrance: asset("/images/lifestyle-entrance.webp"),
-} as const;
+  hero: asset("/images/rawasin/mall-day-exterior.webp"),
+  aerial: asset("/images/rawasin/compound-masterplan.webp"),
+  lifestyle: asset("/images/rawasin/mall-night-plaza.webp"),
+  courtyard: asset("/images/rawasin/mall-day-plaza.webp"),
+  entrance: asset("/images/rawasin/mall-night-exterior.webp"),
+};
 
-/** Google Maps *area search* — no invented plot coordinates. */
-export const mallAreaMapUrl = "https://www.google.com/maps/search/?api=1&query=New+Sohag%2C+Sohag%2C+Egypt";
+export const mallAreaMapUrl =
+  "https://www.google.com/maps/search/?api=1&query=New+Sohag%2C+Sohag+Governorate%2C+Egypt";

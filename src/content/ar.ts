@@ -249,6 +249,7 @@ export const ar: Dictionary = {
     sectionsLabel: "أقسام المشروع",
     nav: {
       overview: "نظرة عامة",
+      models: "مخططات الشقق",
       lifestyle: "أسلوب الحياة",
       masterPlan: "المخطط العام",
       amenities: "المرافق والخدمات",
@@ -258,6 +259,15 @@ export const ar: Dictionary = {
       components: "المكوّنات",
     },
     aboutEyebrow: "عن {name}",
+    models: {
+      eyebrow: "مخططات الشقق",
+      titleLines: ["مساحات سكنية", "صُممت *لعائلتك*"],
+      body: "خمسة نماذج شقق متنوعة بمساحات من 127.5 إلى 236 م²، تراعي حركة الاستخدام اليومي وخصوصية الأسرة.",
+      bedroomsLabel: "{count} غرف نوم",
+      areaLabel: "المساحة الإجمالية",
+      highlightsLabel: "مميزات النموذج",
+      enquireCta: "استفسر عن هذا النموذج",
+    },
     factsLabel: "أبرز مميزات المشروع",
     lifestyleEyebrow: "أسلوب الحياة",
     masterPlan: {

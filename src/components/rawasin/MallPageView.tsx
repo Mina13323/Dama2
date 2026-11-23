@@ -8,6 +8,8 @@ import { ProjectGallery } from "@/components/projects/detail/ProjectGallery";
 import { InquiryForm } from "@/components/projects/detail/InquiryForm";
 import { stagger } from "@/components/motion/Lines";
 import { FloorExplorer } from "./FloorExplorer";
+import { VideoShowcase } from "@/components/projects/detail/VideoShowcase";
+import { mallDayGallery, mallNightGallery, rawasinVideos } from "@/content/rawasin-media";
 
 type Props = {
   locale: Locale;
@@ -282,6 +284,104 @@ export function MallPageView({ locale, dict, plans }: Props) {
         </div>
       </section>
 
+      {/* ---------- Fractional Investment ---------- */}
+      {t.investment && (
+        <section id="investment" aria-labelledby="mall-investment-title" className="scroll-mt-32 border-t border-[#ECEAE5] bg-[#F3F2EF] py-16 sm:py-24">
+          <div className="container-x">
+            <div className="grid gap-5 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-8">
+                <SectionIntro id="mall-investment-title" eyebrow={t.investment.eyebrow} lines={t.investment.titleLines} body={t.investment.body} />
+              </div>
+              <div className="lg:col-span-4 lg:justify-self-end">
+                <ButtonLink href="#enquire">{t.investment.cta}</ButtonLink>
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              {t.investment.shares.map((share, i) => (
+                <div
+                  key={share.title}
+                  data-reveal="card"
+                  style={stagger(1 + i)}
+                  className="flex flex-col justify-between rounded-[28px] border border-[#ECEAE5] bg-white p-7 sm:p-9 shadow-xs transition-all hover:border-[#C51E28]/50 hover:shadow-md"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="inline-block rounded-full bg-[#FDF2F2] px-3.5 py-1 text-[11px] font-bold text-[#C51E28]">
+                        {share.shareSize}
+                      </span>
+                      <span className="text-[12px] font-medium text-[#8C939B]" dir="ltr">
+                        {share.grossArea}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 font-display text-2xl sm:text-3xl text-[#14171A]">{share.title}</h3>
+                    <div className="mt-5 flex items-baseline gap-3">
+                      <p className="font-display text-3xl sm:text-4xl font-bold text-[#C51E28]" dir="ltr">
+                        {share.totalSharePrice}
+                      </p>
+                      <span className="text-[13px] text-[#687076]" dir="ltr">({share.pricePerM2})</span>
+                    </div>
+                    <p className="mt-4 text-[13.5px] leading-relaxed text-[#687076]">{share.notes}</p>
+                  </div>
+                  <div className="mt-7 border-t border-[#ECEAE5] pt-5">
+                    <ButtonLink href="#enquire" variant="outline" className="w-full text-center justify-center">
+                      {t.investment.cta}
+                    </ButtonLink>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 text-[11.5px] text-[#8C939B]">{t.investment.disclaimer}</p>
+          </div>
+        </section>
+      )}
+
+      {/* ---------- Facility Management & Operations (FMO) ---------- */}
+      {t.operations && (
+        <section id="operations" aria-labelledby="mall-operations-title" className="scroll-mt-32 border-t border-[#ECEAE5] bg-white py-16 sm:py-24">
+          <div className="container-x">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1.618fr] lg:gap-14 items-start">
+              {/* Left Column (38.2% Golden Ratio slice) */}
+              <div>
+                <SectionIntro id="mall-operations-title" eyebrow={t.operations.eyebrow} lines={t.operations.titleLines} body={t.operations.lead} />
+                <div className="mt-8 rounded-[24px] bg-[#111417] p-7 text-white">
+                  <p className="text-[11px] font-bold tracking-[0.2em] text-[#E4545C] uppercase">Operational Excellence</p>
+                  <p className="mt-3 text-[14px] leading-relaxed text-white/80">
+                    {locale === "ar"
+                      ? "إدارة تشغيلية تعتمد على المعايير العالمية لصيانة المباني وتخفيض تكاليف المستثمرين مع الحفاظ على القيمة الاستثمارية."
+                      : "Sustainable operational standards engineered to minimize overheads while ensuring pristine visitor experiences."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column (61.8% Golden Ratio slice) */}
+              <div>
+                {/* 4 Metric Highlights */}
+                <div className="grid grid-cols-2 gap-4 sm:gap-5">
+                  {t.operations.metrics.map((m) => (
+                    <div key={m.label} className="rounded-[22px] border border-[#ECEAE5] bg-[#FBFBFA] p-5 sm:p-6 shadow-xs">
+                      <p className="font-display text-3xl sm:text-4xl font-bold text-[#C51E28]" dir="ltr">{m.value}</p>
+                      <p className="mt-1.5 text-[13.5px] font-semibold text-[#14171A]">{m.label}</p>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[#687076]">{m.desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 4 Feature Points */}
+                <ul className="mt-6 grid gap-3.5 sm:grid-cols-2">
+                  {t.operations.features.map((feat) => (
+                    <li key={feat.title} className="rounded-[18px] border border-[#ECEAE5] bg-white p-4.5 shadow-xs">
+                      <p className="text-[13.5px] font-semibold text-[#14171A]">{feat.title}</p>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[#687076]">{feat.desc}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ---------- Partners ---------- */}
       <section id="partners" aria-labelledby="mall-partners-title" className="scroll-mt-32 bg-[#FBFBFA] py-16 sm:py-24">
         <div className="container-x">
@@ -300,9 +400,20 @@ export function MallPageView({ locale, dict, plans }: Props) {
         </div>
       </section>
 
+      {/* ---------- Film ---------- */}
+      <VideoShowcase
+        id="film"
+        eyebrow={ar ? "فيلم" : "Film"}
+        lines={ar ? ["رواسين مول", "*من الخارج*"] : ["Rawasin Mall,", "*Day and Night*"]}
+        body={ar ? "جولة حول واجهات المول والساحات الخارجية نهارًا وليلًا." : "A tour of the mall façades and outdoor terraces, by day and by night."}
+        video={rawasinVideos.mall}
+        label={ar ? "فيلم رواسين مول" : "Rawasin Mall film"}
+        tone="dark"
+      />
+
       {/* ---------- Gallery (lightbox, keyboard + swipe) ---------- */}
       <ProjectGallery
-        images={[mallImages.hero, mallImages.aerial, mallImages.courtyard, mallImages.entrance, mallImages.lifestyle]}
+        images={[...mallDayGallery, ...mallNightGallery]}
         name={t.hero.name}
         labels={dict.projectDetail.gallery}
       />

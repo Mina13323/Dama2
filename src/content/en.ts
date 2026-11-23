@@ -248,6 +248,7 @@ export const en = {
     sectionsLabel: "Project sections",
     nav: {
       overview: "Overview",
+      models: "Apartment Plans",
       lifestyle: "Lifestyle",
       masterPlan: "Master Plan",
       amenities: "Amenities",
@@ -257,6 +258,15 @@ export const en = {
       components: "Components",
     },
     aboutEyebrow: "About {name}",
+    models: {
+      eyebrow: "Apartment Plans",
+      titleLines: ["Thoughtful", "Living *Layouts*"],
+      body: "Explore five distinct apartment layouts ranging from 127.5 to 236 m², designed for everyday movement and family privacy.",
+      bedroomsLabel: "{count} Bedrooms",
+      areaLabel: "Total Area",
+      highlightsLabel: "Layout Highlights",
+      enquireCta: "Enquire About This Layout",
+    },
     factsLabel: "Project highlights",
     lifestyleEyebrow: "The Lifestyle",
     masterPlan: {
