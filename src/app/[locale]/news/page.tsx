@@ -34,31 +34,27 @@ export default async function NewsPage({ params }: { params: Params }) {
   const t = dict.newsPage;
 
   return (
-    <div className="min-h-screen bg-[#FBFBFA]">
+    <div className="min-h-screen bg-canvas">
       {/* Hero */}
-      <section aria-labelledby="news-hero-title" className="relative isolate overflow-hidden bg-[#FBFBFA] pb-16 pt-32 sm:pb-20 sm:pt-40 lg:pb-24 lg:pt-44">
+      <section aria-labelledby="news-hero-title" className="relative isolate overflow-hidden bg-canvas pb-16 pt-32 sm:pb-20 sm:pt-40 lg:pb-24 lg:pt-44">
         {/* Soft atmospheric glow */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-40 start-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#F2ECE4]/70 via-[#FBFBFA]/60 to-transparent blur-3xl rtl:translate-x-1/2"
+          className="pointer-events-none absolute -top-40 start-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-sand/70 via-canvas/60 to-transparent blur-3xl rtl:translate-x-1/2"
         />
 
         {/* Decorative red organic arch drop */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-10 end-10 -z-10 h-72 w-52 rounded-t-full rounded-bl-[140px] bg-gradient-to-b from-[#C51E28] to-[#9F121A] opacity-90 hidden lg:block shadow-lg"
+          className="pointer-events-none absolute -bottom-10 end-10 -z-10 h-72 w-52 rounded-t-full rounded-bl-[140px] bg-gradient-to-b from-red-primary to-red-dark opacity-90 hidden lg:block shadow-lg"
         />
         {/* Soft stone arch accent */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-8 start-8 -z-10 h-40 w-24 rounded-full bg-[#EDEBE5]/80"
-        />
 
-        <div className="container-x">
+        <div className="frame-wide">
           <div className="max-w-2xl">
             <div className="enter-up flex items-center gap-3">
-              <span className="h-[2px] w-5 rounded-full bg-[#C51E28]" aria-hidden />
-              <p className="text-[10.5px] font-medium tracking-[0.28em] text-[#687076] uppercase rtl:tracking-normal">
+              <span className="h-[2px] w-5 rounded-full bg-red-primary" aria-hidden />
+              <p className="text-micro font-medium tracking-[0.28em] text-muted uppercase rtl:tracking-normal">
                 {t.hero.eyebrow}
               </p>
             </div>
@@ -67,9 +63,9 @@ export default async function NewsPage({ params }: { params: Params }) {
               id="news-hero-title"
               mode="enter"
               lines={t.hero.titleLines}
-              className="mt-6 font-serif text-[clamp(2.75rem,5.5vw,4.5rem)] font-normal leading-[1.08] tracking-tight text-[#14171A]"
+              className="mt-6 font-serif text-[clamp(2.75rem,5.5vw,4.5rem)] font-normal leading-[1.08] tracking-tight text-ink"
             />
-            <p className="enter-up mt-6 max-w-xl text-[16px] font-normal leading-relaxed text-[#555E68] sm:text-lg" style={{ animationDelay: "500ms" }}>
+            <p className="enter-up mt-6 max-w-xl text-body font-normal leading-golden text-ink-soft sm:text-lg" style={{ animationDelay: "500ms" }}>
               {t.hero.body}
             </p>
           </div>
@@ -77,7 +73,7 @@ export default async function NewsPage({ params }: { params: Params }) {
       </section>
 
       {/* Stories Browser */}
-      <div className="bg-[#FBFBFA]">
+      <div className="bg-canvas">
         <NewsBrowser articles={articles} locale={locale} labels={t} />
       </div>
     </div>

@@ -50,7 +50,7 @@ export function NewsBrowser({
   return (
     <div className="pb-24 sm:pb-32">
       {/* Filter and Search Bar */}
-      <div className="container-x border-y border-[#ECEAE5] py-5">
+      <div className="frame-wide border-y border-border py-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Categories */}
           <div
@@ -67,10 +67,10 @@ export function NewsBrowser({
                   type="button"
                   aria-pressed={active}
                   onClick={() => setFilter(c)}
-                  className={`min-h-11 shrink-0 rounded-full border px-5 text-[12.5px] font-semibold transition-all duration-200 ${
+                  className={`min-h-11 shrink-0 rounded-full border px-5 text-small font-semibold transition-all duration-200 ${
                     active
-                      ? "border-[#C51E28] bg-[#C51E28] text-white shadow-sm"
-                      : "border-[#ECEAE5] bg-white text-[#14171A] hover:border-[#C51E28]/40 hover:text-[#C51E28] shadow-2xs"
+                      ? "border-red-primary bg-red-primary text-white shadow-sm"
+                      : "border-border bg-white text-ink hover:border-red-primary/40 hover:text-red-primary shadow-2xs"
                   }`}
                 >
                   {label}
@@ -84,27 +84,27 @@ export function NewsBrowser({
             <label htmlFor={searchId} className="sr-only">
               {labels.searchPlaceholder}
             </label>
-            <Search aria-hidden className="absolute start-4 top-1/2 size-4 -translate-y-1/2 text-[#8C939B]" />
+            <Search aria-hidden className="absolute start-4 top-1/2 size-4 -translate-y-1/2 text-subtle" />
             <input
               id={searchId}
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={labels.searchPlaceholder}
-              className="min-h-11 w-full rounded-full border border-[#ECEAE5] bg-white ps-10 pe-4 text-[13px] text-[#14171A] outline-none transition-all placeholder:text-[#8C939B] focus:border-[#C51E28] focus:ring-1 focus:ring-[#C51E28]"
+              className="min-h-11 w-full rounded-full border border-border bg-white ps-10 pe-4 text-small text-ink outline-none transition-all placeholder:text-subtle focus:border-red-primary focus:ring-1 focus:ring-red-primary"
             />
           </div>
         </div>
       </div>
 
-      <div className="container-x mt-10 sm:mt-14">
+      <div className="frame-wide mt-10 sm:mt-14">
         {/* Featured Story Banner (when not searching/filtering) */}
         {featured && (
           <article
             data-reveal="card"
-            className="group relative mb-14 overflow-hidden rounded-[32px] border border-[#ECEAE5] bg-white shadow-lg lg:grid lg:grid-cols-12 lg:items-center"
+            className="group relative mb-14 overflow-hidden rounded-card border border-white bg-white/85 backdrop-blur-md shadow-lg lg:grid lg:grid-cols-13 lg:items-center shadow-card"
           >
-            <div className="relative aspect-[16/10] overflow-hidden sm:aspect-[16/9] lg:col-span-7 lg:h-full lg:min-h-[440px]">
+            <div className="relative aspect-[16/10] overflow-hidden sm:aspect-[16/9] lg:col-span-8 lg:h-full lg:min-h-[440px]">
               <div data-reveal="wipe" className="absolute inset-0">
                 <Image
                   src={featured.image}
@@ -115,14 +115,14 @@ export function NewsBrowser({
                   className="object-cover transition-transform duration-[1.2s] ease-soft group-hover:scale-105"
                 />
               </div>
-              <span className="absolute start-5 top-5 rounded-full bg-[#C51E28] px-3.5 py-1 text-[11px] font-semibold tracking-wider text-white uppercase shadow-md backdrop-blur">
+              <span className="absolute start-5 top-5 rounded-full bg-red-primary px-3.5 py-1 text-caption font-semibold tracking-wider text-white uppercase shadow-md backdrop-blur">
                 {labels.featuredBadge}
               </span>
             </div>
 
             <div className="p-8 sm:p-10 lg:col-span-5 lg:p-12">
-              <div className="flex items-center gap-2 text-[11.5px] font-medium text-[#8C939B] uppercase">
-                <span className="text-[#C51E28] font-semibold">{featured.copy[locale].categoryLabel}</span>
+              <div className="flex items-center gap-2 text-caption font-medium text-subtle uppercase">
+                <span className="text-red-primary font-semibold">{featured.copy[locale].categoryLabel}</span>
                 <span aria-hidden>·</span>
                 <span>{featured.copy[locale].date}</span>
                 <span aria-hidden>·</span>
@@ -132,7 +132,7 @@ export function NewsBrowser({
                 </span>
               </div>
 
-              <h2 className="mt-4 font-serif text-[clamp(1.75rem,2.5vw,2.5rem)] font-normal leading-tight text-[#14171A] transition-colors group-hover:text-[#C51E28]">
+              <h2 className="mt-4 font-serif text-[clamp(1.75rem,2.5vw,2.5rem)] font-normal leading-tight text-ink transition-colors group-hover:text-red-primary">
                 <Link
                   href={`/${locale}/news/${featured.slug}`}
                   className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -141,11 +141,11 @@ export function NewsBrowser({
                 </Link>
               </h2>
 
-              <p className="mt-4 text-[14.5px] font-normal leading-relaxed text-[#555E68]">
+              <p className="mt-4 text-body-sm font-normal leading-golden text-ink-soft">
                 {featured.copy[locale].summary}
               </p>
 
-              <div className="mt-8 flex items-center gap-2 text-[13px] font-semibold text-[#C51E28] group-hover:text-[#9F121A]">
+              <div className="mt-8 flex items-center gap-2 text-small font-semibold text-red-primary group-hover:text-red-dark">
                 <span>{labels.readArticle}</span>
                 <ArrowRight aria-hidden className="flip-rtl size-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
               </div>
@@ -156,14 +156,14 @@ export function NewsBrowser({
         {/* Stories Grid */}
         {visible.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="font-serif text-2xl text-[#14171A]">{labels.empty}</p>
+            <p className="font-serif text-2xl text-ink">{labels.empty}</p>
             <button
               type="button"
               onClick={() => {
                 setFilter("all");
                 setQuery("");
               }}
-              className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[#ECEAE5] bg-white px-6 text-[13px] font-semibold text-[#14171A] hover:border-[#C51E28] hover:text-[#C51E28]"
+              className="mt-6 inline-flex min-h-11 items-center rounded-full border border-border bg-white px-6 text-small font-semibold text-ink hover:border-red-primary hover:text-red-primary"
             >
               {labels.resetFilters}
             </button>
@@ -179,7 +179,7 @@ export function NewsBrowser({
                   key={article.slug}
                   data-reveal="card"
                   style={stagger(i)}
-                  className="group relative flex flex-col overflow-hidden rounded-[28px] border border-[#ECEAE5] bg-white shadow-xs transition-[box-shadow,translate,border-color] duration-500 ease-soft hover:-translate-y-1 hover:border-[#C51E28]/40 hover:shadow-xl"
+                  className="group relative flex flex-col overflow-hidden rounded-card border border-white bg-white/85 backdrop-blur-md shadow-card transition-[box-shadow,translate,border-color] duration-500 ease-soft hover:-translate-y-1 hover:border-red-primary/40 hover:shadow-xl"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                     <div data-reveal="wipe" style={stagger(i)} className="absolute inset-0">
@@ -191,13 +191,13 @@ export function NewsBrowser({
                         className="object-cover transition-transform duration-[1.1s] ease-soft group-hover:scale-105"
                       />
                     </div>
-                    <span className="absolute start-4 top-4 rounded-full bg-[#FDF2F2] border border-[#FCA5A5]/60 px-3 py-1 text-[10.5px] font-semibold tracking-wider text-[#C51E28] uppercase shadow-xs">
+                    <span className="absolute start-4 top-4 rounded-full bg-red-soft border border-red-border/60 px-3 py-1 text-micro font-semibold tracking-wider text-red-primary uppercase shadow-xs">
                       {copy.categoryLabel}
                     </span>
                   </div>
 
                   <div className="flex flex-1 flex-col p-6 sm:p-7">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#8C939B] uppercase">
+                    <div className="flex items-center gap-1.5 text-caption font-medium text-subtle uppercase">
                       <span>{copy.date}</span>
                       <span aria-hidden>·</span>
                       <span className="flex items-center gap-1">
@@ -206,21 +206,21 @@ export function NewsBrowser({
                       </span>
                     </div>
 
-                    <h3 className="mt-3 font-serif text-[19px] font-normal leading-snug text-[#14171A] transition-colors group-hover:text-[#C51E28]">
+                    <h3 className="mt-3 font-serif text-lead font-normal leading-snug text-ink transition-colors group-hover:text-red-primary">
                       <Link href={href} className="after:absolute after:inset-0 focus-visible:outline-none">
                         {copy.title}
                       </Link>
                     </h3>
 
-                    <p className="mt-3 line-clamp-2 text-[13.5px] font-normal leading-relaxed text-[#555E68]">
+                    <p className="mt-3 line-clamp-2 text-body-sm font-normal leading-golden text-ink-soft">
                       {copy.summary}
                     </p>
 
-                    <div className="mt-auto flex items-center justify-between pt-6 text-[12.5px] font-semibold text-[#14171A]">
-                      <span className="group-hover:text-[#C51E28] transition-colors">{labels.readArticle}</span>
+                    <div className="mt-auto flex items-center justify-between pt-6 text-small font-semibold text-ink">
+                      <span className="group-hover:text-red-primary transition-colors">{labels.readArticle}</span>
                       <span
                         aria-hidden
-                        className="inline-flex size-9 items-center justify-center rounded-full bg-[#C51E28] text-white shadow-xs transition-colors group-hover:bg-[#9F121A]"
+                        className="inline-flex size-9 items-center justify-center rounded-full bg-red-primary text-white shadow-xs transition-colors group-hover:bg-red-dark"
                       >
                         <ArrowRight className="flip-rtl size-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
                       </span>
@@ -233,25 +233,25 @@ export function NewsBrowser({
         )}
 
         {/* Press Office Box in Signature Deep Charcoal with Red Button */}
-        <div data-reveal="up" className="mt-16 sm:mt-24 rounded-[32px] bg-[#111417] p-8 sm:p-12 text-white shadow-xl lg:flex lg:items-center lg:justify-between lg:gap-8">
+        <div data-reveal="up" className="mt-16 sm:mt-24 rounded-card bg-gradient-to-br from-red-bright to-red-deep p-8 sm:p-12 text-white shadow-red-lift sm:rounded-panel lg:flex lg:items-center lg:justify-between lg:gap-8">
           <div className="max-w-xl">
             <div className="flex items-center gap-3">
-              <span className="h-[2px] w-4 rounded-full bg-[#C51E28]" aria-hidden />
-              <p className="text-[10.5px] font-semibold tracking-[0.24em] text-[#C51E28] uppercase rtl:tracking-normal">
+              <span className="h-[2px] w-4 rounded-full bg-red-primary" aria-hidden />
+              <p className="text-micro font-semibold tracking-[0.24em] text-white/80 uppercase rtl:tracking-normal">
                 {labels.pressBox.eyebrow}
               </p>
             </div>
             <h2 className="mt-3 font-serif text-[clamp(1.75rem,2.8vw,2.5rem)] font-normal text-white">{labels.pressBox.title}</h2>
-            <p className="mt-3 text-[14px] leading-relaxed text-white/70">{labels.pressBox.body}</p>
+            <p className="mt-3 text-body-sm leading-golden text-white/70">{labels.pressBox.body}</p>
           </div>
           <div className="mt-6 lg:mt-0 shrink-0">
-            <a
-              href="mailto:press@damadevelopments.com"
-              className="inline-flex min-h-12 items-center gap-3 rounded-full bg-[#C51E28] px-7 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#9F121A]"
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex min-h-12 items-center gap-3 rounded-full bg-white px-7 text-small font-semibold text-red-primary shadow-sm transition-colors hover:bg-red-soft"
             >
               {labels.pressBox.cta}
               <ArrowRight aria-hidden className="flip-rtl size-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

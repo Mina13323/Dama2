@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# separate production build folder (NEXT_DIST_DIR)
+/.next-build/

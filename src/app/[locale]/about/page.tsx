@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { AboutCta } from "@/components/about/AboutCta";
 import { AboutHero } from "@/components/about/AboutHero";
+import { AboutLeadership } from "@/components/about/AboutLeadership";
 import { AboutStory } from "@/components/about/AboutStory";
-import { Leadership } from "@/components/about/Leadership";
-import { OrgStructure } from "@/components/about/OrgStructure";
+import { AboutWork } from "@/components/about/AboutWork";
+import { PageSections } from "@/components/sections/PageSections";
+import { aboutBlocks, pick } from "@/content/page-content";
 import { Partners } from "@/components/about/Partners";
 import { WhoWeAre } from "@/components/about/WhoWeAre";
 import { VisionMission } from "@/components/about/VisionMission";
@@ -37,8 +39,9 @@ export default async function AboutPage({ params }: { params: Params }) {
       <WhoWeAre dict={dict} />
       <AboutStory dict={dict} />
       <VisionMission dict={dict} />
-      <Leadership dict={dict} />
-      <OrgStructure locale={locale} />
+      <AboutLeadership dict={dict} />
+      <PageSections locale={locale} blocks={pick(aboutBlocks(locale), ["philosophy"])} />
+      <AboutWork locale={locale} />
       <Partners dict={dict} />
       <AboutCta dict={dict} />
     </>

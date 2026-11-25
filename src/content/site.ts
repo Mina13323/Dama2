@@ -14,46 +14,47 @@
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const asset = (path: string) => `${basePath}${path}`;
 
+/** Corporate imagery is drawn from the Rawasin renders only (1600 px variants); generic stock-style files were retired. */
+const rr = (name: string) => asset(`/images/rawasin/gallery/residential/${name}-md.webp`);
+
 export const images = {
-  hero: asset("/images/hero-building.webp"),
+  hero: rr("rawasin-20-facade-jacaranda"),
   heroSlides: [
-    asset("/images/hero-building.webp"),
-    asset("/images/project-residence.jpg"),
-    asset("/images/about-dama.jpg"),
+    rr("rawasin-20-facade-jacaranda"),
+    rr("rawasin-13-facade-corner"),
+    rr("rawasin-28-aerial-roundabout"),
   ],
-  featured: asset("/images/about-dama.jpg"),
+  featured: rr("rawasin-19-facade-screens"),
   courtyard: asset("/images/story-courtyard.webp"),
   courtyardTree: asset("/images/story-detail-tree.webp"),
   courtyardPalms: asset("/images/story-detail-palms.webp"),
   rawasinAerial: asset("/images/rawasin-aerial.webp"),
   lifestyleEntrance: asset("/images/lifestyle-entrance.webp"),
   lifestyleTree: asset("/images/lifestyle-tree.webp"),
-  story: asset("/images/lifestyle-interior.jpg"),
-  lifestyle: asset("/images/lifestyle-terrace.jpg"),
+  story: rr("rawasin-12-street-jacaranda"),
+  lifestyle: rr("rawasin-14-facade-courtyard-trees"),
   lifestyleThemes: [
-    asset("/images/lifestyle-terrace.jpg"),
-    asset("/images/lifestyle-interior.jpg"),
+    rr("rawasin-14-facade-courtyard-trees"),
+    rr("rawasin-12-street-jacaranda"),
     asset("/images/dama-courtyard-living.jpg"),
   ],
   values: [
     asset("/images/story-detail-tree.webp"),
-    asset("/images/lifestyle-interior.jpg"),
+    rr("rawasin-12-street-jacaranda"),
     asset("/images/story-detail-palms.webp"),
     asset("/images/lifestyle-entrance.webp"),
   ],
-  news: [
-    asset("/images/about-dama.jpg"),
-    asset("/images/hero-dama.jpg"),
-    asset("/images/lifestyle-terrace.jpg"),
-  ],
-  cta: asset("/images/cta-dama.jpg"),
+  news: [rr("rawasin-19-facade-screens"), rr("rawasin-23-facade-row"), rr("rawasin-12-street-jacaranda")],
+  cta: rr("rawasin-10-gate-front"),
   about: {
-    hero: asset("/images/dama-twin-residences.png"),
-    who: asset("/images/dama-courtyard-living.jpg"),
-    story: asset("/images/story-courtyard.webp"),
-    vision: asset("/images/dama-jacaranda-hero.jpg"),
+    hero: rr("rawasin-23-facade-row"),
+    who: rr("rawasin-12-street-jacaranda"),
+    whoDetail: rr("rawasin-25-screen-passage"),
+    story: rr("rawasin-24-street-axis"),
+    storyDetail: rr("rawasin-19-facade-screens"),
+    vision: rr("rawasin-20-facade-jacaranda"),
     mission: asset("/images/lifestyle-entrance.webp"),
-    cta: asset("/images/cta-dama.jpg"),
+    cta: rr("rawasin-10-gate-front"),
   },
   projectsHero: asset("/images/rawasin-aerial-masterplan.jpg"),
 } as const;
@@ -94,7 +95,8 @@ export const social: { label: "Instagram" | "LinkedIn" | "YouTube" | "Facebook";
  * marked placeholders; `linkedin` is only shown when provided.
  */
 export const leadership: { role: "ceo" | "coCeo"; name: string; portrait: string; linkedin: string }[] = [
-  { role: "ceo", name: "", portrait: "", linkedin: "" },
+  /** Name is intentionally empty until DAMA supplies the approved spelling and title; the portrait is the supplied photograph. */
+  { role: "ceo", name: "", portrait: "/images/leadership/ceo.webp", linkedin: "" },
   { role: "coCeo", name: "", portrait: "", linkedin: "" },
 ];
 

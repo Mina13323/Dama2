@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* Same design tokens as the public website (src/app/globals.css), golden-ratio scale included. */
+@theme inline {
+  --color-red-primary: #c51e28;
+  --color-red-dark: #9f121a;
+  --color-red-soft: #fdf2f2;
+  --color-ink: #14171a;
+  --color-ink-soft: #555e68;
+  --color-muted: #687076;
+  --color-subtle: #8c939b;
+  --color-canvas: #fbfaf8;
+  --color-cream: #f9f7f4;
+  --color-sand: #f3eee8;
+  --color-charcoal: #111417;
+  --color-border: #eceae5;
+  --color-stone: #e9e6e0;
+
+  --text-micro: 0.618rem;
+  --text-caption: 0.697rem;
+  --text-small: 0.786rem;
+  --text-body-sm: 0.887rem;
+  --text-body: 1rem;
+  --text-lead: 1.128rem;
+  --text-title-xs: 1.272rem;
+  --text-title-sm: 1.435rem;
+  --text-title: 1.618rem;
+  --text-title-lg: 1.825rem;
+  --leading-golden: 1.618;
+
+  --radius-tile: 17px;
+  --radius-card: 28px;
+  --radius-panel: 45px;
+
+  --shadow-soft: 0 13px 34px -21px rgba(20, 23, 26, 0.35);
+  --shadow-card: 0 21px 55px -34px rgba(20, 23, 26, 0.32);
+  --shadow-red: 0 13px 34px -13px rgba(197, 30, 40, 0.6);
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), Georgia, serif;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: var(--leading-golden);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-red-primary);
+  outline-offset: 2px;
+}

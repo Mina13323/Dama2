@@ -4,10 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Quote } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui";
+import { crumbs } from "@/lib/routes";
 import { stagger } from "@/components/motion/Lines";
 import { getDictionary, isLocale, locales, type Locale } from "@/content";
 import { getNewsArticle, getNewsArticles } from "@/content/news";
 import { absoluteUrl, languageAlternates } from "@/lib/seo";
+import { buttonClass } from "@/components/ui";
 
 export function generateStaticParams() {
   const articles = getNewsArticles();
@@ -51,23 +53,19 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
   const allArticles = getNewsArticles();
   const relatedArticles = allArticles.filter((a) => a.slug !== article.slug).slice(0, 3);
 
-  const breadcrumbs = [
-    { label: dict.nav.home, href: `/${locale}` },
-    { label: dict.nav.news, href: `/${locale}/news` },
-    { label: copy.title },
-  ];
+  const breadcrumbs = crumbs("news-article", locale, copy.title, article.slug);
 
   return (
-    <article className="min-h-screen bg-[#FBFBFA]">
+    <article className="min-h-screen bg-canvas">
       {/* Top Header & Breadcrumbs */}
-      <header className="container-x pt-32 sm:pt-40 pb-8 sm:pb-12">
+      <header className="frame-wide pt-32 sm:pt-40 pb-8 sm:pb-12">
         <Breadcrumbs items={breadcrumbs} className="enter-fade" />
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-[#FDF2F2] border border-[#FCA5A5]/60 px-3.5 py-1 text-[11px] font-semibold tracking-wider text-[#C51E28] uppercase shadow-2xs">
+          <span className="rounded-full bg-red-soft border border-red-border/60 px-3.5 py-1 text-caption font-semibold tracking-wider text-red-primary uppercase shadow-2xs">
             {copy.categoryLabel}
           </span>
-          <span className="flex items-center gap-1.5 text-[12px] font-medium text-[#8C939B] uppercase">
+          <span className="flex items-center gap-1.5 text-small font-medium text-subtle uppercase">
             <span>{copy.date}</span>
             <span aria-hidden>·</span>
             <Clock aria-hidden className="size-3.5" />
@@ -75,18 +73,18 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
           </span>
         </div>
 
-        <h1 className="mt-6 max-w-4xl font-serif text-[clamp(2.4rem,4.5vw,3.75rem)] font-normal leading-[1.12] text-[#14171A]">
+        <h1 className="mt-6 max-w-4xl font-serif text-[clamp(2.4rem,4.5vw,3.75rem)] font-normal leading-[1.12] text-ink">
           <span className="enter-line block">{copy.title}</span>
         </h1>
 
-        <p className="enter-up mt-6 max-w-3xl text-[17px] font-normal leading-relaxed text-[#555E68] sm:text-[19px]">
+        <p className="enter-up mt-6 max-w-3xl text-lead font-normal leading-golden text-ink-soft sm:text-lead">
           {copy.leadParagraph}
         </p>
       </header>
 
       {/* Featured Lead Image */}
-      <div className="container-x pb-12 sm:pb-16">
-        <div className="clip-slant relative aspect-[16/9] w-full overflow-hidden rounded-[32px] border border-[#ECEAE5] bg-slate-100 shadow-lg sm:aspect-[21/9]">
+      <div className="frame-wide pb-12 sm:pb-16">
+        <div className="clip-slant relative aspect-[16/9] w-full overflow-hidden rounded-card border border-border bg-slate-100 shadow-lg sm:aspect-[21/9]">
           <div data-reveal="zoom" className="absolute inset-0">
             <Image
               src={article.image}
@@ -101,25 +99,25 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
       </div>
 
       {/* Article Body Content */}
-      <div className="container-x pb-20 sm:pb-28">
+      <div className="frame-wide pb-20 sm:pb-28">
         <div className="mx-auto max-w-3xl">
           <div className="space-y-12">
             {copy.sections.map((section, idx) => (
               <section key={idx} data-reveal="up" style={stagger(idx)} className="space-y-6">
                 {section.heading && (
-                  <h2 className="font-serif text-[clamp(1.75rem,2.8vw,2.25rem)] font-normal text-[#14171A]">{section.heading}</h2>
+                  <h2 className="font-serif text-[clamp(1.75rem,2.8vw,2.25rem)] font-normal text-ink">{section.heading}</h2>
                 )}
 
                 {section.paragraphs.map((para, pIdx) => (
-                  <p key={pIdx} className="text-[16px] leading-[1.8] text-[#555E68] sm:text-[17px]">
+                  <p key={pIdx} className="text-body leading-[1.8] text-ink-soft sm:text-lead">
                     {para}
                   </p>
                 ))}
 
                 {section.quote && (
-                  <blockquote className="my-8 rounded-[24px] border-s-4 border-[#C51E28] bg-white p-7 sm:p-9 shadow-sm border border-[#ECEAE5]">
-                    <Quote aria-hidden className="size-8 text-[#C51E28]" />
-                    <p className="mt-3 font-serif text-[20px] leading-snug italic text-[#14171A] sm:text-[23px]">
+                  <blockquote className="my-8 rounded-card border-s-4 border-red-primary bg-white/85 backdrop-blur-md p-7 sm:p-9 shadow-card border border-white">
+                    <Quote aria-hidden className="size-8 text-red-primary" />
+                    <p className="mt-3 font-serif text-title-xs leading-snug italic text-ink sm:text-title-sm">
                       &ldquo;{section.quote}&rdquo;
                     </p>
                   </blockquote>
@@ -129,17 +127,17 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
 
             {/* Key Takeaways Box */}
             {copy.keyTakeaways && copy.keyTakeaways.length > 0 && (
-              <div data-reveal="card" className="rounded-[28px] border border-[#ECEAE5] bg-white p-8 sm:p-10 shadow-sm">
+              <div data-reveal="card" className="rounded-card border border-white bg-white/85 backdrop-blur-md p-8 sm:p-10 shadow-card">
                 <div className="flex items-center gap-3">
-                  <span className="h-[2px] w-4 rounded-full bg-[#C51E28]" aria-hidden />
-                  <h3 className="text-[12px] font-semibold tracking-wider text-[#C51E28] uppercase">
+                  <span className="h-[2px] w-4 rounded-full bg-red-primary" aria-hidden />
+                  <h3 className="text-small font-semibold tracking-wider text-red-primary uppercase">
                     {t.keyTakeaways}
                   </h3>
                 </div>
                 <ul className="mt-6 space-y-3.5">
                   {copy.keyTakeaways.map((item, kIdx) => (
-                    <li key={kIdx} className="flex items-start gap-3.5 text-[14.5px] leading-relaxed text-[#14171A]">
-                      <CheckCircle2 aria-hidden className="size-5 shrink-0 text-[#C51E28] mt-0.5" />
+                    <li key={kIdx} className="flex items-start gap-3.5 text-body-sm leading-golden text-ink">
+                      <CheckCircle2 aria-hidden className="size-5 shrink-0 text-red-primary mt-0.5" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -149,10 +147,10 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
           </div>
 
           {/* Back button */}
-          <div className="mt-16 border-t border-[#ECEAE5] pt-8">
+          <div className="mt-16 border-t border-border pt-8">
             <Link
               href={`/${locale}/news`}
-              className="inline-flex min-h-12 items-center gap-2.5 rounded-full border border-[#ECEAE5] bg-white px-7 text-[13px] font-semibold text-[#14171A] shadow-xs transition-colors hover:border-[#C51E28] hover:text-[#C51E28]"
+              className="inline-flex min-h-12 items-center gap-2.5 rounded-full border border-border bg-white px-7 text-small font-semibold text-ink shadow-xs transition-colors hover:border-red-primary hover:text-red-primary"
             >
               <ArrowLeft aria-hidden className="flip-rtl size-4" />
               <span>{t.backToNews}</span>
@@ -163,15 +161,15 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
 
       {/* Related Stories */}
       {relatedArticles.length > 0 && (
-        <section aria-labelledby="related-stories-title" className="border-t border-[#ECEAE5] bg-[#FBFBFA] py-20 sm:py-24">
-          <div className="container-x">
+        <section aria-labelledby="related-stories-title" className=" bg-cream py-section sm:py-section-lg">
+          <div className="frame-wide">
             <div className="flex items-center gap-3">
-              <span className="h-[2px] w-4 rounded-full bg-[#C51E28]" aria-hidden />
-              <p className="text-[10.5px] font-medium tracking-[0.28em] text-[#687076] uppercase rtl:tracking-normal">
+              <span className="h-[2px] w-4 rounded-full bg-red-primary" aria-hidden />
+              <p className="text-micro font-medium tracking-[0.28em] text-muted uppercase rtl:tracking-normal">
                 {t.hero.eyebrow}
               </p>
             </div>
-            <h2 id="related-stories-title" className="mt-3 font-serif text-[clamp(2rem,3.5vw,2.8rem)] font-normal text-[#14171A]">
+            <h2 id="related-stories-title" className="mt-3 font-serif text-[clamp(2rem,3.5vw,2.8rem)] font-normal text-ink">
               {t.relatedTitle}
             </h2>
 
@@ -183,7 +181,7 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
                     key={rel.slug}
                     data-reveal="card"
                     style={stagger(i)}
-                    className="group relative flex flex-col overflow-hidden rounded-[28px] border border-[#ECEAE5] bg-white shadow-xs transition-[box-shadow,translate,border-color] duration-500 ease-soft hover:-translate-y-1 hover:border-[#C51E28]/40 hover:shadow-xl"
+                    className="group relative flex flex-col overflow-hidden rounded-card border border-white bg-white/85 backdrop-blur-md shadow-card transition-[box-shadow,translate,border-color] duration-500 ease-soft hover:-translate-y-1 hover:border-red-primary/40 hover:shadow-xl"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <Image
@@ -195,21 +193,21 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
                       />
                     </div>
                     <div className="flex flex-1 flex-col p-6 sm:p-7">
-                      <p className="text-[11px] font-medium text-[#8C939B] uppercase">
-                        <span className="text-[#C51E28] font-semibold">{rCopy.categoryLabel}</span>
+                      <p className="text-caption font-medium text-subtle uppercase">
+                        <span className="text-red-primary font-semibold">{rCopy.categoryLabel}</span>
                         <span aria-hidden className="mx-1.5">·</span>
                         <span>{rCopy.date}</span>
                       </p>
-                      <h3 className="mt-2 font-serif text-[18px] font-normal leading-snug text-[#14171A] transition-colors group-hover:text-[#C51E28]">
+                      <h3 className="mt-2 font-serif text-lead font-normal leading-snug text-ink transition-colors group-hover:text-red-primary">
                         <Link href={`/${locale}/news/${rel.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none">
                           {rCopy.title}
                         </Link>
                       </h3>
-                      <div className="mt-auto pt-6 flex items-center justify-between text-[12.5px] font-semibold text-[#14171A]">
-                        <span className="group-hover:text-[#C51E28] transition-colors">{t.readArticle}</span>
+                      <div className="mt-auto pt-6 flex items-center justify-between text-small font-semibold text-ink">
+                        <span className="group-hover:text-red-primary transition-colors">{t.readArticle}</span>
                         <span
                           aria-hidden
-                          className="inline-flex size-9 items-center justify-center rounded-full bg-[#C51E28] text-white shadow-xs transition-colors group-hover:bg-[#9F121A]"
+                          className="inline-flex size-9 items-center justify-center rounded-full bg-red-primary text-white shadow-xs transition-colors group-hover:bg-red-dark"
                         >
                           <ArrowRight className="flip-rtl size-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
                         </span>
@@ -235,14 +233,14 @@ function ArticlePending({ locale }: { locale: Locale }) {
       <h1 className="heading-lg max-w-2xl text-ink">
         {ar ? "لم تُنشر مقالات معتمدة بعد." : "No approved articles have been published yet."}
       </h1>
-      <p className="max-w-md text-[14.5px] leading-relaxed text-muted">
+      <p className="max-w-md text-body-sm leading-golden text-muted">
         {ar
           ? "سيتم نشر الأخبار والبيانات الصحفية وتحديثات المشروعات هنا فور اعتمادها من داما."
           : "Approved news, press releases and project updates will appear here as soon as DAMA supplies them."}
       </p>
       <Link
         href={`/${locale}/news`}
-        className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[#C51E28] px-6 text-[13px] font-semibold text-white hover:bg-[#9F121A]"
+        className={`${buttonClass("red", "sm")} mt-4`}
       >
         {ar ? "العودة إلى الأخبار" : "Back to the newsroom"}
       </Link>

@@ -12,7 +12,7 @@ import { Parallax } from "../motion/Parallax";
 export function AboutCta({ dict }: { dict: Dictionary }) {
   const t = dict.about.cta;
   return (
-    <section aria-labelledby="about-cta-title" className="relative isolate overflow-hidden bg-[#111417]">
+    <section aria-labelledby="about-cta-title" className="relative isolate overflow-hidden bg-charcoal">
       <div data-reveal="wipe" className="absolute inset-0 -z-20">
         <div className="absolute inset-0 rtl:-scale-x-100">
           <Parallax amount={8}>
@@ -22,10 +22,10 @@ export function AboutCta({ dict }: { dict: Dictionary }) {
       </div>
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-[#111417]/95 via-[#111417]/70 to-[#111417]/35 lg:bg-gradient-to-r lg:from-[#111417]/95 lg:via-[#111417]/75 lg:via-45% lg:to-transparent lg:to-80% rtl:lg:bg-gradient-to-l"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-charcoal/95 via-charcoal/70 to-charcoal/35 lg:bg-gradient-to-r lg:from-charcoal/95 lg:via-charcoal/75 lg:via-45% lg:to-transparent lg:to-80% rtl:lg:bg-gradient-to-l"
       />
 
-      <div className="container-x flex min-h-[460px] items-end pb-16 pt-28 lg:min-h-[480px] lg:items-center lg:pb-20">
+      <div className="frame-wide flex min-h-[460px] items-end pb-16 pt-28 lg:min-h-[480px] lg:items-center lg:pb-20">
         <div className="max-w-xl">
           <SectionIntro id="about-cta-title" tone="light" eyebrow={t.eyebrow} lines={t.titleLines} body={t.body} delay={2}>
             <ButtonLink href={`/${dict.locale}/contact`} variant="red">

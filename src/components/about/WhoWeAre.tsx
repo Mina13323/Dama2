@@ -1,59 +1,69 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Gem, Layers, Users } from "lucide-react";
 import type { Dictionary } from "@/content";
 import { images } from "@/content/site";
-import { ButtonLink, SectionIntro } from "../ui";
-import { stagger } from "../motion/Lines";
+import { Accent } from "../motion/Lines";
+import { buttonClass } from "@/components/ui";
+
+/** Arch glyph for the Heritage pillar (no equivalent in the icon set). */
+function ArchIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M5 29V15a11 11 0 0 1 22 0v14" />
+      <path d="M11 29V16a5 5 0 0 1 10 0v13" />
+    </svg>
+  );
+}
+const pillarIcons = [ArchIcon, Gem, Layers, Users];
 
 export function WhoWeAre({ dict }: { dict: Dictionary }) {
   const t = dict.about.who;
   return (
-    <section id="who-we-are" aria-labelledby="who-title" className="relative bg-[#FBFBFA] py-20 sm:py-28">
-      <div className="container-x grid gap-12 lg:grid-cols-12 lg:items-center">
+    <section id="who-we-are" aria-labelledby="who-title" className="relative scroll-mt-24 overflow-hidden bg-cream py-section sm:py-section-lg">
+      <div className="mx-auto grid w-full max-w-[1600px] gap-14 px-4 sm:px-8 lg:grid-cols-13 lg:items-center lg:gap-10 lg:px-14">
         {/* Copy */}
         <div className="lg:col-span-5">
-          <SectionIntro id="who-title" eyebrow={t.eyebrow} lines={t.titleLines} body={t.body}>
-            <ButtonLink href="#story" variant="red">{t.cta}</ButtonLink>
-          </SectionIntro>
+          <p className="flex items-center gap-2.5 text-small font-bold tracking-[0.16em] text-red-primary uppercase rtl:tracking-normal">
+            <span aria-hidden className="h-[2px] w-5 bg-red-primary" />
+            {t.eyebrow}
+          </p>
+          <h2 id="who-title" className="mt-5 font-display text-[clamp(2.5rem,4.2vw,4.4rem)] leading-[1.08] text-ink">
+            {t.titleLines.map((line) => (
+              <span key={line} className="block">
+                <Accent text={line} />
+              </span>
+            ))}
+          </h2>
+          <p className="mt-7 max-w-xl text-body leading-[1.8] text-muted">{t.body}</p>
+          <Link href="#story" className={`${buttonClass("red", "md")} mt-9`}>
+            {t.cta}
+            <ArrowRight aria-hidden className="flip-rtl size-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
+          </Link>
 
-          {/* Pillars List in White Card with Red Details */}
-          <div className="mt-10 rounded-[28px] border border-[#ECEAE5] bg-white p-6 shadow-xs">
-            <div className="flex items-center gap-2 text-[#C51E28]">
-              <span className="h-px w-3 bg-[#C51E28]" aria-hidden />
-              <h4 className="text-[11px] font-bold tracking-wider text-[#C51E28] uppercase">
-                {t.pillarsLabel}
-              </h4>
-            </div>
-            <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {t.pillars.map((item, i) => (
-                <li
-                  key={item}
-                  data-reveal="fade"
-                  style={stagger(i)}
-                  className="rounded-xl border border-[#ECEAE5] bg-[#FBFBFA] px-3.5 py-2 text-center text-[12px] font-semibold text-[#14171A] shadow-2xs transition-all hover:border-[#C51E28] hover:bg-[#FDF2F2] hover:text-[#C51E28]"
-                >
-                  {item}
+          <ul aria-label={t.pillarsLabel} className="mt-12 grid max-w-xl grid-cols-4">
+            {t.pillars.map((label, i) => {
+              const Icon = pillarIcons[i] ?? Layers;
+              return (
+                <li key={label} className={`flex flex-col items-center text-center ${i > 0 ? "border-s border-ink/12" : ""}`}>
+                  <Icon aria-hidden className="size-9 text-red-primary" strokeWidth={1.5} />
+                  <span className="mt-3 font-display text-body-sm font-semibold text-ink sm:text-lead">{label}</span>
                 </li>
-              ))}
-            </ul>
-          </div>
+              );
+            })}
+          </ul>
         </div>
 
-        {/* Photograph with Top-Right Red Accent */}
-        <div data-reveal="card" className="relative lg:col-span-7">
-          {/* Top-Right Red Organic Shape */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -end-5 -top-6 -z-10 h-64 w-52 rounded-t-full rounded-es-[120px] bg-[#C51E28] shadow-md"
-          />
+        {/* Arched photograph, red arch behind, inset detail */}
+        <div data-reveal="card" className="relative mx-auto w-full max-w-[860px] pb-10 lg:col-span-8 lg:pe-16 rtl:lg:pe-0 rtl:lg:ps-16">
+          <div aria-hidden className="pointer-events-none absolute end-6 top-2 -z-0 h-[62%] w-[38%] rounded-t-full bg-gradient-to-b from-red-primary to-red-deep" />
 
-          <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[32px] sm:rounded-[40px] border border-[#ECEAE5] bg-white shadow-md">
-            <Image
-              src={images.about.who}
-              alt={t.imageAlt}
-              fill
-              sizes="(min-width: 1024px) 58vw, 100vw"
-              className="object-cover transition-transform duration-[1.2s] ease-soft hover:scale-[1.03]"
-            />
+          <div className="relative aspect-[5/5.2] w-[86%] overflow-hidden rounded-b-card rounded-t-full border-[5px] border-white bg-stone shadow-lift sm:aspect-[6/5.6]">
+            <Image src={images.about.who} alt={t.imageAlt} fill sizes="(min-width:1024px) 46vw, 90vw" className="object-cover transition-transform duration-[1.2s] ease-soft hover:scale-[1.03]" />
+          </div>
+
+          <div className="absolute bottom-0 end-0 aspect-[4/5] w-[34%] overflow-hidden rounded-card border-[6px] border-white bg-stone shadow-card">
+            <Image src={images.about.whoDetail} alt={t.detailAlt} fill sizes="(min-width:1024px) 18vw, 34vw" className="object-cover" />
           </div>
         </div>
       </div>

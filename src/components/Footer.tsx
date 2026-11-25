@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
+import { FileText, Phone, ShieldCheck } from "lucide-react";
 import type { Dictionary, Locale } from "@/content";
-import { getProjects } from "@/content/projects";
+import { footerGroups, href, leafLabel, type ProjectMenu } from "@/lib/routes";
 import { contact, contactVerified, social, socialVerified } from "@/content/site";
 import { Logo } from "./ui";
-import { stagger } from "./motion/Lines";
+import { Accent, stagger } from "./motion/Lines";
+import { res } from "@/content/assets";
 
 const socialIcons: Record<string, string> = {
   Instagram:
@@ -17,50 +19,54 @@ const socialIcons: Record<string, string> = {
     "M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.86.24-1.45 1.48-1.45H16.5V4.47A20 20 0 0 0 14.2 4.4c-2.28 0-3.84 1.39-3.84 3.95v2.15H7.8v3h2.56V21h3.14Z",
 };
 
-export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+const contactIcons: Record<string, typeof Phone> = { contact: Phone, privacy: FileText, terms: ShieldCheck };
+
+export function Footer({ dict, locale, menu }: { dict: Dictionary; locale: Locale; menu: ProjectMenu }) {
   const t = dict.footer;
-  const base = `/${locale}`;
-  const ar = locale === "ar";
+  // Company, then one group per project branch (from the registry), then Contact.
+  const corporate = (id: "company" | "contact") => {
+    const g = footerGroups.find((x) => x.id === id)!;
+    return { id, title: g.title[locale], links: g.links.map((l) => ({ id: l.key as string, href: href(l.key, locale), label: leafLabel(l, locale) })) };
+  };
+  const groups = [
+    corporate("company"),
+    // With several projects, name the project too ("Rawasin · Residential") so columns stay distinct.
+    ...menu.flatMap((p) => p.branches.map((b) => ({ id: `${p.slug}-${b.id}`, title: menu.length > 1 && !b.label.includes(p.name) ? `${p.name} · ${b.label}` : b.label, links: b.links.map((l) => ({ id: l.href, href: l.href, label: l.label })) }))),
+    corporate("contact"),
+  ];
   const year = new Date().getFullYear();
   const socials = socialVerified ? social.filter((s) => s.href) : [];
-  const projects = getProjects();
+  const building = res(locale).screenPassage;
 
-  const quickLinks = [
-    { href: `${base}/about`, label: dict.nav.about },
-    { href: `${base}/projects`, label: dict.nav.projects },
-    { href: `${base}/news`, label: dict.nav.news },
-    { href: `${base}/contact`, label: dict.nav.contact },
-  ];
-
-  const projectLinks = [
-    ...projects.map((p) => ({ href: `${base}/projects/${p.slug}`, label: p.name })),
-    { href: `${base}/projects/rawasin/mall`, label: ar ? "مول رواسين" : "Rawasin Mall" },
-  ];
-
-  const linkCls = "inline-flex min-h-8 items-center text-[13px] text-white/70 transition-colors hover:text-[#C51E28]";
+  const linkCls = "inline-flex min-h-9 items-center text-body-sm text-white/80 transition-colors hover:text-[#E0434C]";
 
   return (
-    <footer className="relative bg-[#111417] text-white">
-      {/* Architectural curved shoulder transition */}
-      <div className="relative h-10 w-full overflow-hidden bg-[#FBFBFA] sm:h-14">
-        <div className="absolute inset-0 rounded-tl-[48px] bg-[#111417] sm:rounded-tl-[72px] rtl:rounded-tl-none rtl:rounded-tr-[48px] rtl:sm:rounded-tr-[72px]" />
+    <footer className="relative isolate overflow-hidden bg-charcoal text-white">
+      {/* Stone façade with a patterned screen, framed by a large arc on the trailing edge */}
+      <div aria-hidden className="pointer-events-none absolute end-0 top-10 -z-10 hidden h-[78%] w-[19%] overflow-hidden rounded-ss-[100%] border-s border-t border-white/10 lg:block rtl:rounded-ss-none rtl:rounded-se-[100%] rtl:border-e rtl:border-s-0">
+        <Image src={building.src} alt="" fill sizes="20vw" className="object-cover object-[60%_center] opacity-90 [mask-image:linear-gradient(to_top,transparent,black_35%)]" />
       </div>
+      <div aria-hidden className="pointer-events-none absolute -end-[6%] -top-[30%] -z-10 hidden aspect-square w-[34vw] rounded-full border border-white/[0.06] lg:block" />
 
-      <div className="container-x pb-10 pt-4 lg:pb-12 lg:pt-6">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-          {/* Brand */}
-          <div data-reveal="up" style={stagger(0)} className="sm:col-span-2 lg:col-span-4">
-            <Link href={base} aria-label={dict.a11y.home} className="inline-block">
-              <Logo tone="light" />
-            </Link>
-            <p className="mt-5 max-w-sm text-[13.5px] leading-relaxed text-white/70">
-              {ar
-                ? "تخلق داما للتطوير العقاري مجتمعات عمرانية راقية في صعيد مصر، تجمع بين الجودة والتصميم المدروس وهوية مصرية أصيلة."
-                : t.description}
+      <div className="mx-auto w-full max-w-[1600px] px-4 pb-10 pt-16 sm:px-8 lg:px-14 lg:pb-12 lg:pt-20">
+        <Link href={href("home", locale)} aria-label={dict.a11y.home} className="inline-block">
+          <Logo tone="light" />
+        </Link>
+
+        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_auto_minmax(0,2.4fr)] lg:gap-14 lg:pe-[18%]">
+          {/* Brand statement */}
+          <div data-reveal="up" style={stagger(0)}>
+            <p className="font-display text-[clamp(2rem,2.8vw,2.9rem)] leading-[1.12] text-white">
+              {t.titleLines.map((line) => (
+                <span key={line} className="block">
+                  <Accent text={line} />
+                </span>
+              ))}
             </p>
+            <p className="mt-6 max-w-md text-body-sm leading-[1.75] text-white/75">{t.description}</p>
 
             {socials.length > 0 && (
-              <ul className="mt-7 flex gap-3" aria-label={t.follow}>
+              <ul className="mt-8 flex gap-4" aria-label={t.follow}>
                 {socials.map((s) => (
                   <li key={s.label}>
                     <a
@@ -68,9 +74,9 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={s.label}
-                      className="inline-flex size-9 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-all duration-200 hover:border-[#C51E28] hover:bg-[#C51E28]"
+                      className="inline-flex size-12 items-center justify-center rounded-full border border-white/60 text-white transition-all duration-200 hover:border-red-primary hover:bg-red-primary"
                     >
-                      <svg aria-hidden viewBox="0 0 24 24" className="size-4 fill-current">
+                      <svg aria-hidden viewBox="0 0 24 24" className="size-5 fill-current">
                         <path d={socialIcons[s.label] || ""} />
                       </svg>
                     </a>
@@ -80,78 +86,47 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             )}
           </div>
 
-          {/* Quick links */}
-          <nav data-reveal="up" style={stagger(1)} aria-label={t.quickLinks} className="lg:col-span-2 lg:col-start-6">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.quickLinks}</h3>
-            <ul className="mt-5 space-y-2">
-              {quickLinks.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className={linkCls}>{l.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <span aria-hidden className="hidden w-px bg-white/15 lg:block" />
 
-          {/* Projects */}
-          <nav data-reveal="up" style={stagger(2)} aria-label={t.ourProjects} className="lg:col-span-2">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.ourProjects}</h3>
-            <ul className="mt-5 space-y-2">
-              {projectLinks.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className={linkCls}>{l.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Contact */}
-          <div data-reveal="up" style={stagger(3)} className="lg:col-span-3">
-            <h3 className="text-[11.5px] font-bold tracking-wider text-white uppercase">{t.getInTouch}</h3>
-            {contactVerified ? (
-              <ul className="mt-5 space-y-3 text-[13px] text-white/70">
-                {contact.phone && (
-                  <li className="flex items-start gap-2.5">
-                    <Phone aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
-                    <a href={`tel:${contact.phone.replace(/\s/g, "")}`} dir="ltr" className="hover:text-white">{contact.phone}</a>
-                  </li>
+          {/* Link groups: Company / Residential / Commercial / Contact */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))]">
+            {groups.map((g, i) => (
+              <nav key={g.id} data-reveal="up" style={stagger(1 + i)} aria-label={g.title}>
+                <h3 className="text-small font-bold tracking-[0.12em] text-white uppercase rtl:tracking-normal">{g.title}</h3>
+                <ul className="mt-5 space-y-2.5">
+                  {g.links.map((l) => {
+                    const Icon = g.id === "contact" ? contactIcons[l.id as keyof typeof contactIcons] : undefined;
+                    return (
+                      <li key={l.id}>
+                        <Link href={l.href} className={`${linkCls} ${Icon ? "gap-3" : ""}`}>
+                          {Icon && <Icon aria-hidden className="size-5 shrink-0 text-white/80" strokeWidth={1.4} />}
+                          {l.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {g.id === "contact" && contactVerified && (
+                  <ul className="mt-5 space-y-3 text-body-sm text-white/70">
+                    {contact.phone && (
+                      <li><a href={`tel:${contact.phone.replace(/\s/g, "")}`} dir="ltr" className="hover:text-white">{contact.phone}</a></li>
+                    )}
+                    {contact.email && (
+                      <li><a href={`mailto:${contact.email}`} dir="ltr" className="hover:text-white">{contact.email}</a></li>
+                    )}
+                  </ul>
                 )}
-                {contact.email && (
-                  <li className="flex items-start gap-2.5">
-                    <Mail aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
-                    <a href={`mailto:${contact.email}`} dir="ltr" className="hover:text-white">{contact.email}</a>
-                  </li>
-                )}
-                <li className="flex items-start gap-2.5">
-                  <MapPin aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[#C51E28]" />
-                  <span>{ar ? contact.addressAr : contact.address}</span>
-                </li>
-              </ul>
-            ) : (
-              <p className="mt-5 max-w-xs text-[13px] leading-relaxed text-white/70">
-                {ar
-                  ? "بيانات الاتصال الرسمية قيد اعتماد داما. استخدم نموذج التواصل أدناه."
-                  : "Official contact details are pending DAMA confirmation. Please use the enquiry form."}
-              </p>
-            )}
-            <Link
-              href={`${base}/contact`}
-              className="mt-5 inline-flex items-center gap-2 border-b border-[#C51E28] pb-1 text-[12.5px] font-semibold text-white hover:text-[#C51E28]"
-            >
-              {ar ? "أرسل استفسارًا" : "Send an enquiry"}
-            </Link>
+              </nav>
+            ))}
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[12px] text-white/50 sm:flex-row">
-          <p>© {year} DAMA Development. {ar ? "جميع الحقوق محفوظة." : "All rights reserved."}</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href={`${base}/privacy-policy`} className="hover:text-white">{t.privacy}</Link>
-            <Link href={`${base}/terms-of-use`} className="hover:text-white">{t.terms}</Link>
-          </div>
-          <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.24em] text-white/80 uppercase">
-            <span className="h-0.5 w-4 bg-[#C51E28]" aria-hidden />
-            <span>UPPER EGYPT · NEW SOHAG</span>
-          </div>
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/15 pt-8 text-body-sm text-white/70 sm:flex-row sm:items-center lg:mt-24">
+          <p>© {year} {t.rights}</p>
+          <p className="flex items-center gap-3 text-small font-bold tracking-[0.24em] text-white uppercase rtl:tracking-normal">
+            <span aria-hidden className="h-0.5 w-5 bg-red-primary" />
+            {t.location}
+          </p>
         </div>
       </div>
     </footer>

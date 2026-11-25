@@ -1,4 +1,4 @@
-import type { VideoItem } from "@/content/rawasin-media";
+import type { VideoItem } from "@/content/projects/rawasin/media";
 import { SectionIntro } from "../../ui";
 
 /** Native, lazy-loading film player. Poster only until the visitor presses play. */
@@ -24,14 +24,14 @@ export function VideoShowcase({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={`scroll-mt-36 border-t py-20 sm:py-24 ${dark ? "border-white/10 bg-[#111417] text-white" : "border-[#ECEAE5] bg-white"}`}
+      className={`scroll-mt-36 border-t py-20 sm:py-24 ${dark ? "border-white/10 bg-charcoal text-white" : "border-border bg-white"}`}
     >
-      <div className="container-x grid gap-10 lg:grid-cols-12 lg:items-center">
-        <div className="lg:col-span-4">
+      <div className="frame-wide grid gap-10 lg:grid-cols-13 lg:items-center">
+        <div className="lg:col-span-5">
           <SectionIntro id={`${id}-title`} eyebrow={eyebrow} lines={lines} body={body} tone={dark ? "light" : "dark"} />
         </div>
         <div className="lg:col-span-8">
-          <div className="overflow-hidden rounded-[24px] border border-[#ECEAE5] bg-black shadow-md">
+          <div className="overflow-hidden rounded-card border border-border bg-black shadow-md">
             <video
               controls
               playsInline

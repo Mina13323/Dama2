@@ -3,30 +3,42 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { Lines, stagger } from "./motion/Lines";
 
-type Variant = "red" | "dark" | "light" | "outline" | "sky";
+type Variant = "red" | "dark" | "light" | "outline";
+export type ButtonSize = "md" | "sm";
 
 const variants: Record<Variant, string> = {
-  red: "bg-[#C51E28] text-white hover:bg-[#9F121A] shadow-sm hover:shadow-md transition-all duration-200",
-  dark: "bg-[#111417] text-white hover:bg-[#262B30] shadow-sm hover:shadow-md transition-all duration-200",
-  light: "bg-white text-[#14171A] hover:bg-[#FDF2F2] border border-[#ECEAE5] shadow-xs transition-all duration-200",
-  outline: "border border-[#ECEAE5] text-[#14171A] hover:border-[#C51E28] hover:text-[#C51E28] transition-all duration-200",
-  sky: "bg-[#C51E28] text-white hover:bg-[#9F121A] shadow-sm transition-all duration-200",
+  red: "bg-red-primary text-white hover:bg-red-dark shadow-red hover:-translate-y-0.5",
+  dark: "bg-charcoal text-white hover:bg-ink shadow-sm hover:shadow-md",
+  light: "bg-white text-red-primary hover:bg-red-soft shadow-soft",
+  outline: "border-[1.5px] border-red-primary text-red-primary hover:bg-red-primary hover:text-white",
 };
+const sizes: Record<ButtonSize, string> = {
+  md: "min-h-13 px-8 py-3 text-body-sm",
+  sm: "min-h-11 px-6 text-small",
+};
+
+/** The one card surface: frosted white on the warm grounds, soft long shadow. Add padding and radius per use. */
+export const cardSurface = "border border-white bg-white/85 shadow-card backdrop-blur-md";
+
+/** The one pill-button style. Use ButtonLink for links; spread this on <button> and other elements. */
+export const buttonClass = (variant: Variant = "red", size: ButtonSize = "md") =>
+  `group inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-60 ${sizes[size]} ${variants[variant]}`;
 
 export function ButtonLink({
   href,
   children,
   variant = "red",
+  size = "md",
   className = "",
   ...rest
-}: { href: string; children: ReactNode; variant?: Variant; className?: string } & Omit<
+}: { href: string; children: ReactNode; variant?: Variant; size?: ButtonSize; className?: string } & Omit<
   ComponentProps<typeof Link>,
   "href" | "className"
 >) {
   return (
     <Link
       href={href}
-      className={`group inline-flex min-h-11 items-center gap-3 rounded-full px-6 py-3 text-[13px] font-semibold tracking-wide transition-colors duration-200 ${variants[variant]} ${className}`}
+      className={`${buttonClass(variant, size)} ${className}`}
       {...rest}
     >
       {children}
@@ -52,7 +64,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`group inline-flex min-h-11 items-center justify-center gap-3 rounded-full px-6 py-3 text-[13px] font-semibold tracking-wide transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${className}`}
+      className={`group inline-flex min-h-11 items-center justify-center gap-3 rounded-full px-6 py-3 text-small font-semibold tracking-wide transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${className}`}
       {...rest}
     >
       {children}
@@ -70,16 +82,16 @@ export function Badge({
   className?: string;
 }) {
   const tones = {
-    neutral: "bg-white text-[#14171A] border border-[#ECEAE5]",
-    sky: "bg-[#FDF2F2] text-[#C51E28] border border-[#FCA5A5]",
-    olive: "bg-[#111417] text-white border border-[#111417]",
-    white: "bg-white/95 text-[#14171A] shadow-sm backdrop-blur",
-    red: "bg-[#C51E28] text-white border border-[#C51E28]",
+    neutral: "bg-white text-ink border border-border",
+    sky: "bg-red-soft text-red-primary border border-red-border",
+    olive: "bg-charcoal text-white border border-charcoal",
+    white: "bg-white/95 text-ink shadow-sm backdrop-blur",
+    red: "bg-red-primary text-white border border-red-primary",
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-wider uppercase backdrop-blur rtl:tracking-normal ${tones[tone]} ${className}`}
+      className={`inline-flex items-center rounded-full px-3 py-1 text-caption font-semibold tracking-wider uppercase backdrop-blur rtl:tracking-normal ${tones[tone]} ${className}`}
     >
       {children}
     </span>
@@ -94,7 +106,7 @@ export function Breadcrumbs({
   className?: string;
 }) {
   return (
-    <nav aria-label="Breadcrumb" className={`text-[12.5px] text-muted ${className}`}>
+    <nav aria-label="Breadcrumb" className={`text-small text-muted ${className}`}>
       <ol className="flex flex-wrap items-center gap-1.5 sm:gap-2">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
@@ -102,11 +114,11 @@ export function Breadcrumbs({
             <li key={i} className="flex items-center gap-1.5 sm:gap-2">
               {i > 0 && <ChevronRight aria-hidden className="flip-rtl size-3.5 text-muted/60" />}
               {isLast || !item.href ? (
-                <span aria-current={isLast ? "page" : undefined} className="font-semibold text-[#14171A]">
+                <span aria-current={isLast ? "page" : undefined} className="font-semibold text-ink">
                   {item.label}
                 </span>
               ) : (
-                <Link href={item.href} className="transition-colors hover:text-[#C51E28]">
+                <Link href={item.href} className="transition-colors hover:text-red-primary">
                   {item.label}
                 </Link>
               )}
@@ -119,7 +131,7 @@ export function Breadcrumbs({
 }
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
-  const textColor = tone === "dark" ? "text-[#14171A]" : "text-white";
+  const textColor = tone === "dark" ? "text-ink" : "text-white";
   return (
     <svg
       viewBox="0 0 349 90.25"
@@ -174,9 +186,9 @@ export function SectionIntro({
   const lineCount = lines.length;
   return (
     <div>
-      <div data-reveal="fade" style={stagger(delay)} className={`flex items-center gap-2 ${light ? "text-white/80" : "text-[#C51E28]"}`}>
-        <span className={`h-px w-4 ${light ? "bg-white/60" : "bg-[#C51E28]"}`} aria-hidden />
-        <p className={`text-[11px] font-bold tracking-[0.24em] uppercase rtl:tracking-normal ${light ? "text-white/90" : "text-[#C51E28]"}`}>
+      <div data-reveal="fade" style={stagger(delay)} className={`flex items-center gap-2.5 ${light ? "text-white/80" : "text-red-primary"}`}>
+        <span className={`h-[2px] w-5 ${light ? "bg-white/70" : "bg-red-primary"}`} aria-hidden />
+        <p className={`text-small font-bold tracking-[0.16em] uppercase rtl:tracking-normal ${light ? "text-white/90" : "text-red-primary"}`}>
           {eyebrow}
         </p>
       </div>
@@ -184,13 +196,13 @@ export function SectionIntro({
         id={id}
         lines={lines}
         delay={delay + 1}
-        className={`${size === "xl" ? "heading-xl" : "heading-lg"} mt-4 font-display font-normal ${light ? "text-white" : "text-[#14171A]"}`}
+        className={`${size === "xl" ? "heading-xl" : "heading-lg"} mt-5 font-display font-normal ${light ? "text-white" : "text-ink"}`}
       />
       {body && (
         <p
           data-reveal="up"
           style={stagger(delay + lineCount + 1)}
-          className={`mt-5 max-w-md text-[15px] leading-relaxed ${light ? "text-white/85" : "text-muted"}`}
+          className={`mt-6 max-w-xl text-body leading-[1.75] ${light ? "text-white/85" : "text-muted"}`}
         >
           {body}
         </p>

@@ -4,7 +4,8 @@ import { Fragment, type CSSProperties, type ElementType } from "react";
 export function Accent({ text }: { text: string }) {
   return text.split(/(\*[^*]+\*)/).map((part, i) =>
     part.startsWith("*") && part.endsWith("*") ? (
-      <span key={i} className="text-[#C51E28] italic font-serif">
+      // Red by default; a parent on a red ground sets --accent-ink so the accent stays visible.
+      <span key={i} className="text-[var(--accent-ink,#C51E28)] italic font-serif">
         {part.slice(1, -1)}
       </span>
     ) : (

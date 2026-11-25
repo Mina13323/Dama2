@@ -3,91 +3,71 @@ import type { ReactNode } from "react";
 import { Eye, MountainSnow } from "lucide-react";
 import type { Dictionary } from "@/content";
 import { images } from "@/content/site";
-import { Lines, stagger } from "../motion/Lines";
+import { Accent, stagger } from "../motion/Lines";
 
 type Panel = Dictionary["about"]["vision"]["vision"];
 
-/**
- * Two equal statements under one sky. Each photograph bleeds from its outer
- * edge with an organic curve; the two compositions mirror each other.
- */
+/** Heading + intro over a soft sky; the building rises from the bottom edge; two statement cards (light / red). */
 export function VisionMission({ dict }: { dict: Dictionary }) {
   const t = dict.about.vision;
   return (
-    <section
-      id="vision-mission"
-      aria-labelledby="vision-mission-title"
-      className="relative bg-[#FBFBFA] py-16 sm:py-24"
-    >
-      <div className="container-x">
-        {/* Soft Stone Organic Container */}
-        <div className="rounded-[36px] sm:rounded-[44px] bg-[#EDEBE5]/70 p-6 sm:p-10 lg:p-12 border border-[#ECEAE5]">
-          <div className="flex items-center gap-2 text-[#C51E28]">
-            <span className="h-px w-4 bg-[#C51E28]" aria-hidden />
-            <h2 id="vision-mission-title" className="text-[11px] font-bold tracking-[0.24em] uppercase rtl:tracking-normal">
+    <section id="vision-mission" aria-labelledby="vision-mission-title" className="relative isolate scroll-mt-24 overflow-hidden bg-gradient-to-b from-cream to-[#F6EEE7]">
+      {/* Building rising from the bottom-leading corner, fading into the sky */}
+      <div aria-hidden className="pointer-events-none absolute bottom-0 start-0 -z-10 h-[62%] w-full lg:w-[62%]">
+        <Image src={images.about.vision} alt="" fill sizes="(min-width:1024px) 62vw, 100vw" className="object-cover object-[30%_35%] [mask-image:linear-gradient(to_top,black_55%,transparent),linear-gradient(to_left,transparent,black_35%)] [mask-composite:intersect] rtl:[mask-image:linear-gradient(to_top,black_55%,transparent),linear-gradient(to_right,transparent,black_35%)]" />
+      </div>
+      {/* faint orbit line */}
+      <div aria-hidden className="pointer-events-none absolute -top-[40%] end-[-10%] -z-10 hidden aspect-square w-[70vw] rounded-full border border-white lg:block" />
+
+      <div className="mx-auto w-full max-w-[1600px] px-4 pb-16 pt-20 sm:px-8 sm:pb-24 sm:pt-24 lg:px-14">
+        <div className="grid gap-8 lg:grid-cols-13 lg:items-end">
+          <div className="lg:col-span-8">
+            <p className="flex items-center gap-2.5 text-small font-bold tracking-[0.18em] text-red-primary uppercase rtl:tracking-normal">
+              <span aria-hidden className="h-[2px] w-5 bg-red-primary" />
               {t.eyebrow}
+            </p>
+            <h2 id="vision-mission-title" className="mt-5 font-display text-[clamp(2.5rem,4.4vw,4.6rem)] leading-[1.08] text-ink">
+              {t.titleLines.map((line) => (
+                <span key={line} className="block">
+                  <Accent text={line} />
+                </span>
+              ))}
             </h2>
           </div>
+          <p className="max-w-lg text-body leading-[1.75] text-muted lg:col-span-5 lg:mb-[clamp(5rem,9vw,9rem)]">{t.intro}</p>
+        </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-2">
-            <Statement
-              panel={t.vision}
-              icon={<Eye aria-hidden strokeWidth={1.5} className="size-6" />}
-              image={images.about.vision}
-              base={1}
-            />
-            <Statement
-              panel={t.mission}
-              icon={<MountainSnow aria-hidden strokeWidth={1.5} className="size-6" />}
-              image={images.about.mission}
-              base={4}
-            />
-          </div>
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:ms-auto lg:mt-8 lg:w-[58%]">
+          <Statement panel={t.vision} icon={<Eye aria-hidden strokeWidth={1.6} className="size-7" />} tone="light" base={1} />
+          <Statement panel={t.mission} icon={<MountainSnow aria-hidden strokeWidth={1.6} className="size-7" />} tone="red" base={3} />
         </div>
       </div>
     </section>
   );
 }
 
-function Statement({
-  panel,
-  icon,
-  image,
-  base,
-}: {
-  panel: Panel;
-  icon: ReactNode;
-  image: string;
-  base: number;
-}) {
+function Statement({ panel, icon, tone, base }: { panel: Panel; icon: ReactNode; tone: "light" | "red"; base: number }) {
+  const red = tone === "red";
   return (
-    <article className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] border border-[#ECEAE5] bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-lg">
-      <div>
-        <div className="flex items-center justify-between">
-          <span className="flex size-11 items-center justify-center rounded-full border border-[#C51E28]/40 bg-[#FDF2F2] text-[#C51E28]">
-            {icon}
-          </span>
-          <span className="text-[10.5px] font-bold tracking-[0.22em] text-[#C51E28] uppercase">
-            {panel.label}
-          </span>
-        </div>
-
-        <Lines as="h3" lines={panel.titleLines} delay={base + 1} className="mt-6 font-display text-[26px] sm:text-[30px] font-normal leading-tight text-[#14171A]" />
-
-        <p data-reveal="up" style={stagger(base + 3)} className="mt-4 text-[14.5px] font-normal leading-relaxed text-[#687076]">
-          {panel.body}
-        </p>
-      </div>
-
-      <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-[24px] border border-[#ECEAE5]">
-        <Image
-          src={image}
-          alt={panel.imageAlt}
-          fill
-          sizes="(min-width:1024px) 35vw, 100vw"
-          className="object-cover transition-transform duration-[1.2s] ease-soft group-hover:scale-105"
-        />
-      </div>
+    <article
+      data-reveal="up"
+      style={stagger(base)}
+      className={`relative overflow-hidden rounded-card p-8 sm:p-10 ${
+        red
+          ? "bg-gradient-to-br from-red-bright to-[#A9141D] text-white shadow-red-lift"
+          : "border border-white bg-white/75 text-ink shadow-lift backdrop-blur-md"
+      }`}
+    >
+      {red && (
+        <svg aria-hidden viewBox="0 0 160 120" className="pointer-events-none absolute -bottom-2 end-0 h-40 w-auto text-white/[0.12] rtl:scale-x-[-1]">
+          {Array.from({ length: 6 }).flatMap((_, x) =>
+            Array.from({ length: 5 }).map((__, y) => <rect key={`${x}-${y}`} x={40 + x * 20 + (y % 2) * 10} y={20 + y * 20} width="8" height="12" rx="2" fill="currentColor" />),
+          )}
+        </svg>
+      )}
+      <span className={`flex size-16 items-center justify-center rounded-2xl ${red ? "border border-white/70 text-white" : "border border-red-primary/25 bg-red-soft text-red-primary"}`}>{icon}</span>
+      <h3 className="mt-7 font-display text-[clamp(1.9rem,2.6vw,2.6rem)] leading-tight">{panel.label}</h3>
+      <p className={`relative mt-5 text-body leading-[1.75] ${red ? "text-white/90" : "text-muted"}`}>{panel.body}</p>
     </article>
   );
 }

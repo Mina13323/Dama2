@@ -13,13 +13,19 @@
  */
 import { en } from "../src/content/en";
 import { ar } from "../src/content/ar";
-import { getProjects, getProject, availableCategories, legacyProjectSlugs } from "../src/content/projects";
+import { crumbs, footerGroups, pages, projectPath, staticPagePaths, type PageKey, type ProjectTarget } from "../src/lib/routes";
+import { getProjects, getProject, availableCategories, legacyProjectSlugs, projects, type Section, type SectionPart } from "../src/content/projects";
+import { projectMenu } from "../src/content/projects/menu";
+import { rawasinLink } from "../src/content/projects/rawasin/links";
+import { floorIds, unitTypeIds } from "../src/content/projects/rawasin/mall";
+import { localeRedirects, rootRedirects } from "../src/lib/redirects";
 import { newsArticles, getNewsArticles, getNewsArticle } from "../src/content/news";
 import { getCareerPositions, getCareerPosition } from "../src/content/careers";
-import { rawasinMall } from "../src/content/rawasin";
+import { rawasinMall } from "../src/content/projects/rawasin/mall";
 import { contact, social, contactVerified, socialVerified, legalVerified } from "../src/content/site";
 import { careerPillars } from "../src/content/careers";
 import { validateLead } from "../src/lib/leads";
+import * as pc from "../src/content/page-content";
 
 let passed = 0;
 let failed = 0;
@@ -61,8 +67,8 @@ assert(en.nav.projects === "Our Developments" && en.nav.sustainability === "Our 
 // 2. Project portfolio
 console.log("\n2. Project Portfolio Integrity:");
 const allProjects = getProjects();
-assert(allProjects.length === 3, `Three developments are published (found: ${allProjects.length})`);
-assert(allProjects.map((p) => p.slug).join(",") === "rawasin,dama-residence,dama-view", "Canonical slugs are stable");
+assert(allProjects.length === 1, `Only Rawasin is published as a development (found: ${allProjects.length})`);
+assert(allProjects.map((p) => p.slug).join(",") === "rawasin", "Canonical slugs are stable");
 assert(getProject("rwasin")?.slug === "rawasin", "Legacy /projects/rwasin URL resolves to Rawasin");
 assert(legacyProjectSlugs.rwasin === "rawasin", "Legacy slug alias is declared");
 for (const p of allProjects) {
@@ -72,16 +78,78 @@ for (const p of allProjects) {
 }
 const rawasin = getProject("rawasin")!;
 assert(rawasin.copy.en.components.some((c) => c.href === "mall"), "Rawasin Mall is a component of Rawasin, not a separate development");
+assert(rawasin.branches.map((b) => b.id).join(",") === "residential,mall", "Rawasin has two branches: residential and mall");
 assert(rawasin.copy.en.facts.length > 0, "Rawasin publishes brochure-confirmed facts");
 assert(rawasin.copy.en.facts.every((f) => !/\d+\s*%/.test(f.value)), "No unapproved percentage claims on Rawasin");
-for (const slug of ["dama-residence", "dama-view"]) {
-  const p = getProject(slug)!;
-  assert(p.copy.en.facts.length === 0, `${p.name} publishes no invented facts`);
-  assert(p.copy.en.amenities.length === 0, `${p.name} publishes no invented amenities`);
-  assert(!p.mapUrl, `${p.name} publishes no unverified map pin`);
-}
 const categories = availableCategories();
 assert(categories.includes("residential") && categories.includes("commercial") && categories.includes("mixed-use"), "Filters cover residential / commercial / mixed-use");
+
+// 2b. Information architecture: corporate route table + project registry
+console.log("\n2b. Routes, Registry & Navigation:");
+const keys = Object.keys(pages) as PageKey[];
+const paths = keys.map((k) => pages[k].path);
+assert(new Set(paths).size === paths.length, "No two corporate pages share a path");
+assert(keys.every((k) => k === "home" || pages[k].parent !== undefined), "Every page has a parent (breadcrumb hierarchy)");
+assert(keys.every((k) => pages[k].en && pages[k].ar), "Every page has an EN and AR label");
+assert(keys.every((k) => k === "home" || crumbs(k, "en").length >= 2), "Every page produces a breadcrumb trail");
+assert(!keys.some((k) => /dama-(residence|view)|rawasin/.test(pages[k].path)), "Project pages are not in the corporate route table");
+assert(footerGroups.map((g) => g.id).join(",") === "company,contact", "Corporate footer groups: Company, Contact (project groups come from the registry)");
+
+/** Anchors a project page exposes: section ids, section-tab ids and apartment showcase cards. */
+const anchorsOf = (sections: Section[], modelIds: string[]) =>
+  new Set(
+    sections.flatMap((s) => [
+      s.id,
+      ...s.parts.flatMap((p) => (p.type === "tabs" ? p.tabs.map((t) => `${s.id}-${t.id}`) : p.type === "apartmentShowcase" ? modelIds.map((m) => `${s.id}-${m}`) : [])),
+    ]),
+  );
+const pageAnchors = new Map<string, Set<string>>();
+for (const p of projects) {
+  const modelIds = (p.copy.en.models ?? []).map((m) => m.id);
+  pageAnchors.set(projectPath({ project: p.slug }), anchorsOf(p.hub, modelIds));
+  for (const b of p.branches) pageAnchors.set(projectPath({ project: p.slug, branch: b.id }), anchorsOf(b.sections, modelIds));
+}
+const reaches = (t: ProjectTarget) => {
+  const a = pageAnchors.get(projectPath({ project: t.project, branch: t.branch }));
+  return !!a && (!t.anchor || a.has(t.anchor));
+};
+
+for (const p of projects) {
+  const pagesOf: [string, Section[]][] = [["hub", p.hub], ...p.branches.map((b) => [b.id, b.sections] as [string, Section[]])];
+  for (const [page, secs] of pagesOf) {
+    const ids = secs.map((x) => x.id);
+    assert(new Set(ids).size === ids.length, `${p.slug}/${page}: section ids are unique`);
+    assert(secs.every((x) => x.label.en && x.label.ar), `${p.slug}/${page}: every section has EN and AR labels`);
+    const missing: string[] = [];
+    const walkParts = (where: string, parts: SectionPart[]) => {
+      for (const part of parts) {
+        if (part.type === "blocks") for (const l of ["en", "ar"] as const) for (const id of part.ids) if (!part.from(l)[id]) missing.push(`${where} ${l}:${id}`);
+        if (part.type === "tabs") for (const t of part.tabs) walkParts(`${where}>${t.id}`, t.parts);
+        if (part.type === "film" && !p.films?.[part.film]) missing.push(`${where} film:${part.film}`);
+      }
+    };
+    for (const x of secs) walkParts(`#${x.id}`, x.parts);
+    assert(missing.length === 0, `${p.slug}/${page}: every referenced block and film exists ${missing.slice(0, 3).join(" ")}`);
+  }
+}
+const places = ["rawasin", "commercial", "residential", "residential-architecture", "residential-lifestyle", "residential-apartments", "residential-location", "mall", "mall-master-plan", "mall-floors", "mall-units", "mall-medical", "mall-lifestyle", "mall-operations", "mall-partners", "mall-location"] as const;
+assert(places.every((pl) => reaches(rawasinLink(pl))), "Every named Rawasin place lands on a real page section");
+assert(floorIds.every((f) => reaches(rawasinLink("mall-floor", f))) && unitTypeIds.every((u) => reaches(rawasinLink("mall-unit", u))), "Every floor and unit type has its own mall tab");
+assert(rawasin.copy.en.models!.every((m) => reaches(rawasinLink("residential-apartment", m.id))), "Every apartment type has its own residential card");
+const menu = projectMenu("en");
+assert(menu.length === projects.length && menu.every((m) => m.branches.length > 0 && m.branches.every((b) => b.links.length > 0)), "Header/footer menu lists every project branch with its sections");
+
+// Redirects: retired URLs never shadow a live page, and always land on one.
+const live = new Set([...staticPagePaths(), ...pageAnchors.keys()]);
+const resolves = (to: string) => {
+  const [path, anchor] = to.split("#");
+  return pageAnchors.has(path) ? !anchor || pageAnchors.get(path)!.has(anchor) : !anchor && live.has(path);
+};
+assert(localeRedirects.every((r) => !live.has(r.from)), "No locale redirect overwrites a live page");
+assert(new Set(localeRedirects.map((r) => r.from)).size === localeRedirects.length, "Locale redirect sources are unique");
+const badTargets = [...localeRedirects, ...rootRedirects].filter((r) => !resolves(r.to)).map((r) => r.to);
+assert(badTargets.length === 0, `Every redirect lands on a live page/section ${badTargets.join(" ")}`);
+assert(floorIds.length === 5 && rawasin.copy.en.models!.length === 5 && unitTypeIds.length === 2, "Tabs: 5 floors, 5 apartment types, 2 unit types");
 
 // 3. Rawasin Mall
 console.log("\n3. Rawasin Mall Content Integrity:");
@@ -119,7 +187,10 @@ assert(rawasinMall.en.masterPlan.facts.some((f) => f.value === "6,280 m²"), "Co
 assert(rawasinMall.en.masterPlan.facts.some((f) => f.value === "123 metres"), "Frontage is 123 metres");
 assert(rawasinMall.en.location.destinations.length === 6, "Six nearby destinations are listed");
 assert(!/minute|mins|km|\d+\s*min/i.test(rawasinMall.en.location.body + rawasinMall.en.location.note), "No invented travel times or distances");
-assert(rawasinMall.en.partners.entries.length === 3, "ACCORD, WE and Dar Arafa are represented");
+assert(
+  ["ACCORD", "WE", "Dar Arafa Architecture", "Middle East Engineering Consultants"].every((n) => rawasinMall.en.partners.entries.some((e) => e.name === n)),
+  "ACCORD, WE, Dar Arafa and Middle East Engineering Consultants are represented",
+);
 assert(rawasinMall.en.partners.entries.every((p) => /project|rawasin/i.test(p.context)), "Partner roles are project-specific, not company-wide");
 
 // 4. Newsroom
@@ -156,6 +227,73 @@ assert(social.length >= 4 && social.every((s) => s.href.startsWith("https://")),
 assert(contactVerified === false, "Unverified contact details are hidden from the public UI");
 assert(socialVerified === false, "Unverified social profiles are hidden from the public UI");
 assert(legalVerified === false, "Unapproved legal text is hidden behind the verification flag");
+// 8. Page content architecture (TASK 02)
+console.log("\n8. Page Content Architecture:");
+const builders: Record<string, (l: "en" | "ar") => pc.BlockSet> = {
+  developments: pc.developmentsBlocks,
+  rawasin: pc.rawasinHubBlocks,
+  residential: pc.residentialBlocks,
+  architecture: pc.architectureBlocks,
+  lifestyle: pc.lifestyleBlocks,
+  apartments: pc.apartmentsBlocks,
+  residentialLocation: pc.residentialLocationBlocks,
+  commercial: pc.commercialBlocks,
+  mallOverview: pc.mallOverviewBlocks,
+  masterPlan: pc.masterPlanBlocks,
+  floorsIndex: pc.floorsIndexBlocks,
+  units: pc.unitsBlocks,
+  medical: pc.medicalBlocks,
+  mallLifestyle: pc.mallLifestyleBlocks,
+  operations: pc.operationsBlocks,
+  partners: pc.partnersBlocks,
+  mallLocation: pc.mallLocationBlocks,
+  about: pc.aboutBlocks,
+};
+for (const [name, build] of Object.entries(builders)) {
+  const en = build("en");
+  const ar = build("ar");
+  const ids = Object.keys(en);
+  assert(ids.length >= 2 && ids.join() === Object.keys(ar).join(), `${name}: EN and AR define the same sections`);
+  assert(ids.every((id) => en[id].kind === ar[id].kind), `${name}: EN and AR use the same section kinds`);
+}
+for (const f of floorIds) {
+  assert(Object.keys(pc.floorDetailBlocks("en", f)).length >= 2, `Floor ${f}: has focus and navigation sections beyond the plan explorer`);
+}
+for (const t of rawasin.copy.en.models!.map((m) => m.id)) {
+  assert(Object.keys(pc.apartmentDetailBlocks("en", t)).length === 3, `Apartment ${t}: comparison, context and enquiry sections`);
+}
+const everything = JSON.stringify([
+  ...Object.values(builders).flatMap((b) => [b("en"), b("ar")]),
+  ...floorIds.flatMap((f) => [pc.floorDetailBlocks("en", f), pc.floorDetailBlocks("ar", f)]),
+  ...unitTypeIds.flatMap((u) => [pc.unitDetailBlocks("en", u), pc.unitDetailBlocks("ar", u)]),
+]);
+assert(!/EGP|ج\.م|lorem ipsum|placeholder|pending approval/i.test(everything), "No prices, placeholders or lorem ipsum in page sections");
+assert(!/\b20%|up to 20/i.test(everything), "The unconfirmed 'up to 20%' operating-cost claim is not published");
+for (const m of getProject("rawasin")!.copy.en.models!) {
+  assert(!/en-suite|cross-ventilation|salon|terrace|courtyard orientation/i.test(m.description + m.highlights.join(" ")), `${m.type}: no undocumented apartment features`);
+}
+
+
+// 9. Visual assets (TASK 03)
+console.log("9. Visual Assets:");
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { res, mall, mallAll, residentialAll, brochureImg, clubhousePlans, partnerLogos } from "../src/content/assets";
+const onDisk = (u: string) => existsSync(join(process.cwd(), "public", u.replace(/^\/+/, "")));
+const registry = [
+  ...Object.values(res("en")), ...Object.values(mall("en")),
+  ...[...residentialAll("en"), ...mallAll("en")],
+];
+assert(registry.every((i) => onDisk(i.src) && onDisk(i.sm) && onDisk(i.lg)), "Every render has sm, md and lg files on disk");
+assert([...Object.values(brochureImg("en")), ...clubhousePlans("en").map((p) => p.img), ...Object.values(partnerLogos)].every((i) => onDisk(i.src)), "Brochure images, clubhouse plans and partner logos exist");
+assert([...registry, ...Object.values(brochureImg("en"))].every((i) => i.w > 0 && i.h > 0 && i.alt.length > 8), "Every image declares dimensions and alt text");
+assert(Object.values(brochureImg("ar")).every((i) => /[؀-ۿ]/.test(i.alt)), "Arabic alt text is provided for brochure images");
+const retired = ["about-dama", "cta-dama", "hero-dama", "project-residence", "project-rwasin", "project-view", "lifestyle-interior", "lifestyle-terrace", "dama-twin-residences"];
+const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
+const srcText = walk("src").filter((f) => /\.(ts|tsx)$/.test(f)).map((f) => readFileSync(f, "utf8")).join(" ");
+assert(retired.every((n) => !srcText.includes(n)), "Generic non-Rawasin images are no longer referenced by the site");
+
+
 
 console.log("\n=======================================================");
 console.log(` SUMMARY: ${passed} passed, ${failed} failed`);

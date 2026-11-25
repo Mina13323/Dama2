@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "tsx scripts/write-redirects.ts",
     "start": "next start",
     "lint": "eslint",
     "test:integrity": "tsx scripts/test-integrity.ts",
+    "test:links": "tsx scripts/test-links.ts",
+    "test:e2e": "tsx scripts/test-e2e.ts",
     "test": "npm run lint && npm run test:integrity"
   },
   "dependencies": {

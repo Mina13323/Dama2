@@ -2,24 +2,21 @@ import type { MetadataRoute } from "next";
 import { locales } from "@/content";
 import { getNewsArticles } from "@/content/news";
 import { projects } from "@/content/projects";
+import { pagePath, projectPath, staticPagePaths } from "@/lib/routes";
 import { absoluteUrl, languageAlternates } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-/** Locale-agnostic paths. URLs follow NEXT_PUBLIC_SITE_URL / NEXT_PUBLIC_BASE_PATH. */
+/**
+ * Locale-agnostic paths: corporate pages from the route table, project hubs and
+ * branches from the project registry. Tabs and sections are anchors, not URLs.
+ * URLs follow NEXT_PUBLIC_SITE_URL / NEXT_PUBLIC_BASE_PATH.
+ */
 function paths(): string[] {
   return [
-    "",
-    "/about",
-    "/projects",
-    ...projects.map((p) => `/projects/${p.slug}`),
-    "/projects/rawasin/mall",
-    "/news",
-    ...getNewsArticles().map((a) => `/news/${a.slug}`),
-    "/contact",
-    "/careers",
-    "/privacy-policy",
-    "/terms-of-use",
+    ...staticPagePaths(),
+    ...projects.flatMap((p) => [projectPath({ project: p.slug }), ...p.branches.map((b) => projectPath({ project: p.slug, branch: b.id }))]),
+    ...getNewsArticles().map((a) => pagePath("news-article", a.slug)),
   ];
 }
 

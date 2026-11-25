@@ -1,3 +1,4 @@
+import { projectMenu } from "@/content/projects/menu";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
@@ -102,6 +103,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
+  const menu = projectMenu(locale);
 
   return (
     // The boot script toggles reveal classes on <html> before hydration.
@@ -115,9 +117,9 @@ export default async function LocaleLayout({
         <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
       </head>
       <body>
-        <Header dict={dict} locale={locale} />
+        <Header dict={dict} locale={locale} menu={menu} />
         <main id="main">{children}</main>
-        <Footer dict={dict} locale={locale} />
+        <Footer dict={dict} locale={locale} menu={menu} />
         <RevealController />
       </body>
     </html>
